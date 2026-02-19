@@ -3,7 +3,7 @@ mergeWithControl <- function(mb, ctrlObj, targColumn) {
   # adjusted number of control cells should no go over 33% of number of tumor cells
   expNumCtrlCells <- round( 0.33 * ncol(mb))
   if (ncol(ctrlObj) > expNumCtrlCells) {
-    message("Adjust external control, decrease num cells to",expNumCtrlCells)
+    message("Adjust external control, decrease num cells to ",expNumCtrlCells)
     ctrlObj <- ctrlObj[ , seq_len(expNumCtrlCells)]
   }
   #print(ctrlObj)
@@ -20,7 +20,7 @@ mergeWithControl <- function(mb, ctrlObj, targColumn) {
 }
 
 
-prepareAnalysis <- function(mb, resDir, sId, annData, targColumn, ctrlObj) {
+prepareAnalysis <- function(mb, resDir, sId, annData, targColumn, ctrlObj, performGA) {
   if (!is.null(annData)) {
     cIds <- intersect(rownames(annData), rownames(mb@meta.data))
     if (length(cIds) == 0) {
@@ -65,29 +65,31 @@ prepareAnalysis <- function(mb, resDir, sId, annData, targColumn, ctrlObj) {
   }
 
 
-  message("Normalization...")
+  if (performGA) {
+    message("Perform general analysis...")
+    message("Normalization...")
 
-  mb <- RunTFIDF(mb)
-  mb <- FindTopFeatures(mb, min.cutoff = 'q0')
-  mb <- RunSVD(mb)
+    mb <- RunTFIDF(mb)
+    mb <- FindTopFeatures(mb, min.cutoff = 'q0')
+    mb <- RunSVD(mb)
 
-  message("Dimensional reduction...")
+    message("Dimensional reduction...")
 
-  ndim <- 30 # default 30
+    ndim <- 30 # default 30
 
-  mb <- RunUMAP(object = mb, reduction = 'lsi', dims = 2:ndim)
-  mb <- FindNeighbors(object = mb, reduction = 'lsi', dims = 2:ndim)
-  mb <- FindClusters(object = mb, verbose = FALSE, algorithm = 3)
+    mb <- RunUMAP(object = mb, reduction = 'lsi', dims = 2:ndim)
+    mb <- FindNeighbors(object = mb, reduction = 'lsi', dims = 2:ndim)
+    mb <- FindClusters(object = mb, verbose = FALSE, algorithm = 3)
 
-  pdf(paste0(resDir,sId,"_UMAP.pdf"),width = 8, height = 6)
-  # print REQUIRED for ggplot2 output
-  print(DimPlot(object = mb, pt.size=1, label=TRUE))
-  if (nchar(targColumn) > 0) {
-    print(DimPlot(mb, reduction = "umap",
-                  label = TRUE,group.by = targColumn)) # REQUIRED for ggplot2 output
+    pdf(paste0(resDir,sId,"_UMAP.pdf"),width = 8, height = 6)
+    # print REQUIRED for ggplot2 output
+    print(DimPlot(object = mb, pt.size=1, label=TRUE))
+    if (nchar(targColumn) > 0) {
+      print(DimPlot(mb, reduction = "umap",
+                    label = TRUE,group.by = targColumn)) # REQUIRED for ggplot2 output
+    }
+    dev.off()
   }
-  dev.off()
-
   saveRDS(mb, paste0(resDir,sId,"_obj.RDS" ))
 
   mb
@@ -139,12 +141,13 @@ saveCnvInput <- function(mb,resDir, sId, targColumn) {
 #' e.g. 500000 for 500 KBp. Default: NULL (not use this option)
 #' @param chromLength Numeric vector of chromosome sizes, specific for genome. Default: NULL
 #' @param metaCells Set TRUE to use meta cells (n=5 cells will be used to merge) or assign a number of cells. Default: FALSE
+#' @param performGA Perform general analysis of scATAC-data (clustering, UMAP). Default: TRUE
 #' @return Invisibly returns NULL.
 #' @examples
 #' resPath = tempfile()
 #' inPath = system.file("extdata", "MB183_ATAC_subset.tsv.gz", package = "atacInferCnv")
-#' sAnn = system.file("extdata", "MB183_ATAC_subset.CNV_blocks_ann.txt", package = "atacInferCnv" )
-#' prepareAtacInferCnvInput(inPath,sAnn,resPath, targColumn = "cnvBlock", ctrlGrp = "Normal")
+#' sAnn = system.file("extdata", "MB183_ATAC_subset.CNV_blocks_ann_n30.txt", package = "atacInferCnv" )
+#' prepareAtacInferCnvInput(inPath,sAnn,resPath, targColumn = "cnvBlock", ctrlGrp = "Normal",performGA = FALSE)
 #'
 #' @export
 #'
@@ -154,7 +157,7 @@ prepareAtacInferCnvInput <- function(dataPath = "",
                                      targColumn = "CellType",
                                      ctrlGrp = "Normal", ctrlObj = NULL,
                                      binSize = NULL, chromLength = NULL,
-                                     metaCells = FALSE) {
+                                     metaCells = FALSE, performGA = TRUE) {
 
   message("Loading input...")
   if (nchar(resDir) == 0) {
@@ -225,7 +228,7 @@ prepareAtacInferCnvInput <- function(dataPath = "",
       #print(class(annData[, targColumn]))
       if (is.null(ctrlObj)) {
         annInfo <- summary(as.factor(annData[, targColumn]))
-        message(annInfo)
+        message(paste(capture.output(annInfo)))
         ctrlStatus <- as.numeric(str_split_1(ctrlGrp,pattern = ",") %in% names(annInfo))
         if (any(ctrlStatus == 0) ) {
           stop("Non-tumor control group is not found in annotation: ", ctrlGrp)
@@ -255,7 +258,7 @@ prepareAtacInferCnvInput <- function(dataPath = "",
       }
       if (is.null(ctrlObj)) {
         annInfo <- summary(as.factor(annData[, targColumn]))
-        message(annInfo)
+        message(paste(capture.output(annInfo)))
         ctrlStatus <- as.numeric(str_split_1(ctrlGrp,pattern = ",") %in% names(annInfo))
         if (any(ctrlStatus == 0) ) {
           stop("Non-tumor control group is not found in annotation: ", ctrlGrp)
@@ -283,7 +286,7 @@ prepareAtacInferCnvInput <- function(dataPath = "",
 
   if (is.null(inObj)) {
     message("Prepare input data...")
-    mb <- prepareAnalysis(mb, resDir, sId, annData, targColumn, ctrlObj)
+    mb <- prepareAnalysis(mb, resDir, sId, annData, targColumn, ctrlObj, performGA)
   }
 
   message("Save signal...")

@@ -44,11 +44,12 @@ test_that("atacInferCnv works on toy data", {
   ctrlId = "Normal"
   sId = "MB183_ATAC_test"
   inPath = system.file("extdata", "MB183_ATAC_subset.tsv.gz", package = "atacInferCnv")
-  sAnn = system.file("extdata", "MB183_ATAC_subset.CNV_blocks_ann.txt", package = "atacInferCnv" )
+  sAnn = system.file("extdata", "MB183_ATAC_subset.CNV_blocks_ann_n30.txt", package = "atacInferCnv" )
   resPath = tempfile()
 
   expect_message(prepareAtacInferCnvInput(inPath, sAnn, resPath,
-                                          targColumn = "cnvBlock",ctrlGrp = ctrlId),
+                                          targColumn = "cnvBlock",
+                                          ctrlGrp = ctrlId,performGA = FALSE),
                  regexp = "Prepared input")
 
   expect_true(file.exists(paste0(resPath,"/sample_raw_counts.txt.gz")))

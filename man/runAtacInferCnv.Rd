@@ -43,8 +43,9 @@ original inferCnv options.
 \examples{
 resPath = tempfile()
 inPath = system.file("extdata", "MB183_ATAC_subset.tsv.gz", package = "atacInferCnv")
-sAnn = system.file("extdata", "MB183_ATAC_subset.CNV_blocks_ann.txt", package = "atacInferCnv" )
-prepareAtacInferCnvInput(inPath,sAnn,resPath, targColumn = "cnvBlock", ctrlGrp = "Normal")
+sAnn = system.file("extdata", "MB183_ATAC_subset.CNV_blocks_ann_n30.txt", package = "atacInferCnv" )
+prepareAtacInferCnvInput(inPath,sAnn,resPath, targColumn = "cnvBlock",
+                         ctrlGrp = "Normal",performGA = FALSE)
 runAtacInferCnv(resPath)
 
 }

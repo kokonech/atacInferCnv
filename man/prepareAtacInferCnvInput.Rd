@@ -15,7 +15,8 @@ prepareAtacInferCnvInput(
   ctrlObj = NULL,
   binSize = NULL,
   chromLength = NULL,
-  metaCells = FALSE
+  metaCells = FALSE,
+  performGA = TRUE
 )
 }
 \arguments{
@@ -41,6 +42,8 @@ e.g. 500000 for 500 KBp. Default: NULL (not use this option)}
 \item{chromLength}{Numeric vector of chromosome sizes, specific for genome. Default: NULL}
 
 \item{metaCells}{Set TRUE to use meta cells (n=5 cells will be used to merge) or assign a number of cells. Default: FALSE}
+
+\item{performGA}{Perform general analysis of scATAC-data (clustering, UMAP). Default: TRUE}
 }
 \value{
 Invisibly returns NULL.
@@ -51,7 +54,7 @@ Prepare input for the CNV calling from scATAC-seq data
 \examples{
 resPath = tempfile()
 inPath = system.file("extdata", "MB183_ATAC_subset.tsv.gz", package = "atacInferCnv")
-sAnn = system.file("extdata", "MB183_ATAC_subset.CNV_blocks_ann.txt", package = "atacInferCnv" )
-prepareAtacInferCnvInput(inPath,sAnn,resPath, targColumn = "cnvBlock", ctrlGrp = "Normal")
+sAnn = system.file("extdata", "MB183_ATAC_subset.CNV_blocks_ann_n30.txt", package = "atacInferCnv" )
+prepareAtacInferCnvInput(inPath,sAnn,resPath, targColumn = "cnvBlock", ctrlGrp = "Normal",performGA = FALSE)
 
 }
