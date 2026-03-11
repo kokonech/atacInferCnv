@@ -28,7 +28,7 @@ The default input data for the package are file path to raw signals matrix in te
 
 For input matrix other data formats are also supported, as described further, but here we will start with the path to the standard matrix and annotation in text format. For the launch also the path and name of the result should be stated. We will use temporary folder for this:
 
-```{r quick-start-1,  message=FALSE, warning=FALSE}
+```{r quick-start-1, message=FALSE, warning=FALSE}
 library(atacInferCnv)
 inPath = system.file("extdata", "MB183_ATAC_subset.tsv.gz", 
                      package = "atacInferCnv")
@@ -56,6 +56,14 @@ runAtacInferCnv(resPath)
 ```
 
 The generated output is saved inside the result path as infercnv subfolder. The function has specific parameters that require adjustment for ATAC-data such as for example number of clusters (numClusters). Importantly, it supports all options of the original inferCnv functions. These details could be checked from InferCnv [documentation](https://github.com/broadinstitute/inferCNV/wiki).
+
+atacInferCnv can also generate pseudo-bulk CNV images from the assigned in annotation (if numClusters = 1 assigned in runAtacInferCnv()) or identified subclones (if numClusters \> 1 in the same function). For this purpose use the corresponding function after performing the analysis:
+
+```{r quick-start-5,  message=FALSE, warning=FALSE}
+plotCnvBlocks(resPath)
+```
+
+These figures show CNV patterns for full merged signal and for subclones without (C1) and with (C1) MYCN amplification in chr2.
 
 # Custom settings
 

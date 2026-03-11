@@ -4,10 +4,14 @@
 \alias{plotCnvBlocks}
 \title{Function to plot CNV blocks}
 \usage{
-plotCnvBlocks(resDir)
+plotCnvBlocks(resDir, plot = TRUE, save = FALSE)
 }
 \arguments{
 \item{resDir}{Path to the result directory with input}
+
+\item{plot}{Set TRUE to output plot to the screen. Default: TRUE}
+
+\item{save}{Set TRUE to save plot to the result directory}
 }
 \value{
 Invisibly returns NULL.

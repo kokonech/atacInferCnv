@@ -3,6 +3,9 @@
 #'
 #' This function creates a plot for CNV assigned/identified subclones
 #' @param resDir Path to the result directory with input
+#' @param plot Set TRUE to output plot to the screen. Default: TRUE
+#' @param save Set TRUE to save plot to the result directory
+#'
 #' @return Invisibly returns NULL.
 #' @examples
 #' resPath = tempfile()
@@ -14,7 +17,7 @@
 #' plotCnvBlocks(resPath)
 #' @export
 
-plotCnvBlocks <- function( resDir) {
+plotCnvBlocks <- function( resDir, plot = TRUE, save = FALSE) {
 
   cnvDir <- paste0(resDir,"/sample_infercnv")
   if (!(dir.exists(cnvDir))) {
@@ -65,8 +68,7 @@ plotCnvBlocks <- function( resDir) {
     names(hcBlocksAdj) <- names(hcBlocks)
     blocks <- c("Full", unique(hcBlocksAdj))
   }
-  resName <- paste0(cnvDir,"/subclone_CNV_plot.pdf")
-  pdf(resName, width = 14, height= 6)
+
 
   for (targ in blocks) {
     message(targ)
@@ -84,24 +86,35 @@ plotCnvBlocks <- function( resDir) {
       }
       vals <- rowMeans(cnvMtx[,cellIds])
     }
-    adjCols <- rbPal(10)[as.numeric(cut(vals,breaks = 10))]
 
-    p<- plot(vals,pch=20,cex=0.3,
-       main=paste0("inferCNV signal:",targ), col=adjCols,ylim=c(cMin,cMax),
-       xlab="Chromosome", ylab="Modified expr",  axes=FALSE)
-    p <- p + abline(h=1, col="grey",lwd=1, lty=2)
-    if (length(chrBreaks) > 0) {
-      p <- p + abline(v=c(1,breaks,nrow(gnMtx)),col="black",lwd=1,lty=2)
-      p <- p + axis(side=1,at=chrBorders,labels=names(chrBorders),cex.axis=0.45 )
+    drawPlot <- function(vals,targ) {
+      adjCols <- rbPal(10)[as.numeric(cut(vals,breaks = 10))]
+
+      plot(vals,pch=20,cex=0.3,
+               main=paste0("inferCNV signal:",targ), col=adjCols,ylim=c(cMin,cMax),
+               xlab="Chromosome", ylab="Modified expr",  axes=FALSE)
+      abline(h=1, col="grey",lwd=1, lty=2)
+      if (length(chrBreaks) > 0) {
+        abline(v=c(1,breaks,nrow(gnMtx)),col="black",lwd=1,lty=2)
+        axis(side=1,at=chrBorders,labels=names(chrBorders),cex.axis=0.45 )
+      }
+
+      #abline(v=markerLoci, col="red", lwd=0.2, lty=2)
+      axis(side=2,seq(round(cMin,2),round(cMax,2),0.01) )
+      box()
     }
 
-    # print REQUIRED for ggplot2 output
-    #abline(v=markerLoci, col="red", lwd=0.2, lty=2)
-    p <- p + axis(side=2,seq(round(cMin,2),round(cMax,2),0.01) )
-    print(p)
-  }
 
-  dev.off()
+    if (plot) {
+      invisible(print(drawPlot(vals,targ)))
+    }
+    if (save) {
+      resName <- paste0(cnvDir,"/subclone_",targ,"_CNV_plot.pdf")
+      grDevices::pdf(resName, width = 14, height= 6 )
+      print(drawPlot(vals,targ))
+      grDevices::dev.off()
+    }
+  }
 
   invisible(NULL)
 }
