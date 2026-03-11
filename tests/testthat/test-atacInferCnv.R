@@ -39,7 +39,7 @@ test_that("prepare input function parses data correctly", {
 
 })
 
-test_that("atacInferCnv works on toy data", {
+test_that("atacInferCnv works correctly on toy data", {
 
   ctrlId = "Normal"
   sId = "MB183_ATAC_test"

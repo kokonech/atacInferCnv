@@ -21,43 +21,16 @@ mergeWithControl <- function(mb, ctrlObj, targColumn) {
 
 
 prepareAnalysis <- function(mb, resDir, sId, annData, targColumn, ctrlObj, performGA) {
-  if (!is.null(annData)) {
-    cIds <- intersect(rownames(annData), rownames(mb@meta.data))
-    if (length(cIds) == 0) {
-      stop("No overlapping cells IDs in annotation!")
-    }
-    message("Adjust for custom annotation")
-    mb <- subset(mb, cells= cIds)
-    #mb <- mb[ ,cIds]
-    #print(summary(rownames(mb@meta.data) == cIds))
-    mb@meta.data <- cbind(mb@meta.data,  annData[rownames(mb@meta.data),targColumn])
-    colnames(mb@meta.data)[ncol(mb@meta.data)] <- targColumn
-  } else {
-    mb <- NucleosomeSignal(mb)
-    mb <- TSSEnrichment(mb)
-
-    resName <- paste0(resDir, sId,"_VlnPlot_QC.pdf")
-    pdf(resName, width=8,height=6)
-    VlnPlot(
-      object = mb,
-      features = c("nCount_ATAC", "TSS.enrichment", "nucleosome_signal"),
-      pt.size = 0
-    )
-    dev.off()
-
-    # filter out low quality cells
-    mb <- subset(
-      x = mb,
-      subset = nCount_ATAC < 100000 &
-        nCount_ATAC > 1000 &
-        nucleosome_signal < 2 &
-        TSS.enrichment > 1
-    )
-
-    pdf(paste0(resDir, sId,"_VlnPlot_QC.after_filter.pdf"), width=8, height=6)
-    VlnPlot(mb, features = c("nCount_ATAC", "TSS.enrichment", "nucleosome_signal"),     pt.size=0)
-    dev.off()
+  cIds <- intersect(rownames(annData), rownames(mb@meta.data))
+  if (length(cIds) == 0) {
+    stop("No overlapping cells IDs in annotation!")
   }
+  message("Adjust for custom annotation")
+  mb <- subset(mb, cells= cIds)
+  #mb <- mb[ ,cIds]
+  #print(summary(rownames(mb@meta.data) == cIds))
+  mb@meta.data <- cbind(mb@meta.data,  annData[rownames(mb@meta.data),targColumn])
+  colnames(mb@meta.data)[ncol(mb@meta.data)] <- targColumn
 
   if (!is.null(ctrlObj)) {
     message("Merge with external control object")

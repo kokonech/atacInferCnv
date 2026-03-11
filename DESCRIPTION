@@ -12,6 +12,8 @@ Imports:
     Signac,
     Seurat,
     GenomicRanges,
+    GenomeInfoDb,
+    S4Vectors,
     config,
     stringr,
     ggplot2,
