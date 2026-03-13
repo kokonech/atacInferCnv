@@ -10,6 +10,8 @@
 #' @param addDenoise Activate denoise (InferCNV param). Deafult: TRUE
 #' @param clusterRefs Cluster also reference (InferCNV param). Default: FALSE
 #' @param smoothMethod Method for smoothing (InferCNV param). Default: runmeans
+#' @param verbose Detailed output, progress messages, and diagnostic information.
+#' If deactivated InferCnv log is saved to file infercnv.log. Default: TRUE
 #' @param ... Other parameters to provide for infercnv::run, more details in documentation of this function
 #' @return Invisibly returns NULL.
 #' @examples
@@ -25,7 +27,7 @@
 runAtacInferCnv <- function(resDir, configFile = "infercnv_config.yml",
                             numClusters = 1, chrToExclude = c("Y","MT"),
                             addDenoise = TRUE, clusterRefs = FALSE,
-                            smoothMethod = "runmeans",
+                            smoothMethod = "runmeans", verbose = TRUE,
                             ...) {
 
   if (!(dir.exists(resDir))) {
@@ -36,24 +38,33 @@ runAtacInferCnv <- function(resDir, configFile = "infercnv_config.yml",
   originalDir <- getwd()
   on.exit(setwd(originalDir))
   setwd(resDir)
+  if (verbose) {
+    message("Loading InferCNV configuration from: ",configFile)
+  }
 
-  message("Loading InferCNV configuration from: ",configFile)
   cfg <- config::get(file=configFile)
-
-  message("Processing ",cfg$resName)
-  message("Input: ",cfg$countsFile)
-  message("Annotation: ",cfg$annFile)
-  message("Normal clusters: ",cfg$refGroup)
-  message("Cut off: ",cfg$cutOff)
+  if (verbose) {
+    message("Processing ",cfg$resName)
+    message("Input: ",cfg$countsFile)
+    message("Annotation: ",cfg$annFile)
+    message("Normal clusters: ",cfg$refGroup)
+    message("Cut off: ",cfg$cutOff)
+  }
 
   groupUsage <- ifelse(numClusters > 1,FALSE,TRUE)
-  message("Num tumor clusters: ",numClusters)
-
+  if (verbose) {
+    message("Num tumor clusters: ",numClusters)
+  }
   refGroups <- str_split(cfg$refGroups,",")[[1]]
-
-  message("Assign custom reference: ",cfg$customRef)
+  if (verbose) {
+    message("Assign custom reference: ",cfg$customRef)
+  }
   geneOrderRef <- cfg$customRef
 
+  if (!verbose) {
+    log <- file(paste0(resDir,"/infercnv.log"),open="a")
+    sink(file = log, type = "message")
+  }
 
   # specific:  selected cluster as reference
   infercnv_obj <- CreateInfercnvObject(raw_counts_matrix=cfg$countsFile,
@@ -81,6 +92,10 @@ runAtacInferCnv <- function(resDir, configFile = "infercnv_config.yml",
                                ...
 
   )
+
+  if (!verbose) {
+    sink(NULL,type = "message")
+  }
 
   invisible(NULL)
 }

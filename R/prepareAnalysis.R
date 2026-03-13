@@ -1,9 +1,18 @@
 
+pa_message <- function(msg) {
+  # source: https://ropensci.org/blog/2024/02/06/verbosity-control-packages/
+  if (getOption("perfromGA.quiet", FALSE)) {
+    return()
+  }
+  message(msg)
+}
+
+
 mergeWithControl <- function(mb, ctrlObj, targColumn) {
   # adjusted number of control cells should no go over 33% of number of tumor cells
   expNumCtrlCells <- round( 0.33 * ncol(mb))
   if (ncol(ctrlObj) > expNumCtrlCells) {
-    message("Adjust external control, decrease num cells to ",expNumCtrlCells)
+    pa_message(paste0("Adjust external control, decrease num cells to ",expNumCtrlCells))
     ctrlObj <- ctrlObj[ , seq_len(expNumCtrlCells)]
   }
   #print(ctrlObj)
@@ -20,12 +29,12 @@ mergeWithControl <- function(mb, ctrlObj, targColumn) {
 }
 
 
-prepareAnalysis <- function(mb, resDir, sId, annData, targColumn, ctrlObj, performGA) {
+prepareAnalysis <- function(mb, resDir, sId, annData, targColumn, ctrlObj, performGA, paVerbose) {
   cIds <- intersect(rownames(annData), rownames(mb@meta.data))
   if (length(cIds) == 0) {
     stop("No overlapping cells IDs in annotation!")
   }
-  message("Adjust for custom annotation")
+  pa_message("Adjust for custom annotation")
   mb <- subset(mb, cells= cIds)
   #mb <- mb[ ,cIds]
   #print(summary(rownames(mb@meta.data) == cIds))
@@ -33,26 +42,26 @@ prepareAnalysis <- function(mb, resDir, sId, annData, targColumn, ctrlObj, perfo
   colnames(mb@meta.data)[ncol(mb@meta.data)] <- targColumn
 
   if (!is.null(ctrlObj)) {
-    message("Merge with external control object")
+    pa_message("Merge with external control object")
     mb <- mergeWithControl(mb, ctrlObj, targColumn )
   }
 
 
   if (performGA) {
-    message("Perform general analysis...")
-    message("Normalization...")
+    pa_message("Perform general analysis...")
+    pa_message("Normalization...")
 
-    mb <- RunTFIDF(mb)
-    mb <- FindTopFeatures(mb, min.cutoff = 'q0')
-    mb <- RunSVD(mb)
+    mb <- RunTFIDF(mb, verbose = paVerbose)
+    mb <- FindTopFeatures(mb, min.cutoff = 'q0', verbose = paVerbose)
+    mb <- RunSVD(mb, verbose = paVerbose)
 
-    message("Dimensional reduction...")
+    pa_message("Dimensional reduction...")
 
     ndim <- 30 # default 30
 
-    mb <- RunUMAP(object = mb, reduction = 'lsi', dims = 2:ndim)
-    mb <- FindNeighbors(object = mb, reduction = 'lsi', dims = 2:ndim)
-    mb <- FindClusters(object = mb, verbose = FALSE, algorithm = 3)
+    mb <- RunUMAP(object = mb, reduction = 'lsi', dims = 2:ndim,verbose = paVerbose)
+    mb <- FindNeighbors(object = mb, reduction = 'lsi', dims = 2:ndim,verbose = paVerbose)
+    mb <- FindClusters(object = mb, verbose = paVerbose, algorithm = 3)
 
     pdf(paste0(resDir,sId,"_UMAP.pdf"),width = 8, height = 6)
     # print REQUIRED for ggplot2 output
@@ -115,6 +124,7 @@ saveCnvInput <- function(mb,resDir, sId, targColumn) {
 #' @param chromLength Numeric vector of chromosome sizes, specific for genome. Default: NULL
 #' @param metaCells Set TRUE to use meta cells (n=5 cells will be used to merge) or assign a number of cells. Default: FALSE
 #' @param performGA Perform general analysis of scATAC-data (clustering, UMAP). Default: TRUE
+#' @param verbose Detailed output, progress messages, and diagnostic information. Default: TRUE
 #' @return Invisibly returns NULL.
 #' @examples
 #' resPath = tempfile()
@@ -127,12 +137,18 @@ saveCnvInput <- function(mb,resDir, sId, targColumn) {
 prepareAtacInferCnvInput <- function(dataPath = "",
                                      annPath = "",
                                      resDir = "", inObj = NULL, sId = "sample",
-                                     targColumn = "CellType",
-                                     ctrlGrp = "Normal", ctrlObj = NULL,
+                                     targColumn = "CellType",ctrlGrp = "Normal",
+                                     ctrlObj = NULL,
                                      binSize = NULL, chromLength = NULL,
-                                     metaCells = FALSE, performGA = TRUE) {
+                                     metaCells = FALSE,
+                                     performGA = TRUE, verbose = TRUE) {
 
-  message("Loading input...")
+
+
+  # take care about messages
+  options(perfromGA.quiet = !verbose)
+
+  pa_message("Loading input...")
   if (nchar(resDir) == 0) {
     stop("Path to result is not provided!")
   }
@@ -142,7 +158,7 @@ prepareAtacInferCnvInput <- function(dataPath = "",
 
     }
     if (dir.exists(dataPath)) {
-      message("Input is directory, assuming 10X data folder...")
+      pa_message("Input is directory, assuming 10X data folder...")
       # scMulti-omics
       countsPath <- paste0(dataPath,"/filtered_feature_bc_matrix.h5")
       fragpath <- paste0(dataPath, "/atac_fragments.tsv.gz")
@@ -150,7 +166,7 @@ prepareAtacInferCnvInput <- function(dataPath = "",
       countsPath2 <- paste0(dataPath,"/filtered_peak_bc_matrix.h5")
       if (!(file.exists(countsPath))) {
         if (file.exists(countsPath2)) {
-          message("10X scATAC format identified")
+          pa_message("10X scATAC format identified")
           countsVals <- Read10X_h5(countsPath2)
           fragpath <- paste0(dataPath, "/fragments.tsv.gz")
         } else {
@@ -158,7 +174,7 @@ prepareAtacInferCnvInput <- function(dataPath = "",
              "\nExpected formats: filtered_feature_bc_matrix.h5 or filtered_peak_bc_matrix.h5")
         }
       } else {
-        message("10X scMulti-omics format identified")
+        pa_message("10X scMulti-omics format identified")
         countsVals <- Read10X_h5(countsPath)$Peaks
       }
 
@@ -174,7 +190,7 @@ prepareAtacInferCnvInput <- function(dataPath = "",
         fragments = fragpath
       )
     } else {
-      message("Input is a file, assuming peaks matrix...")
+      pa_message("Input is a file, assuming peaks matrix...")
       countsVals <- read.delim(dataPath,check.names = FALSE)
       chrom_assay  <- CreateChromatinAssay(
         counts = countsVals,
@@ -197,11 +213,11 @@ prepareAtacInferCnvInput <- function(dataPath = "",
     if (! (targColumn %in% colnames(annData) ) ) {
       stop("Required annotation column is not available: ", targColumn)
     } else {
-      message("Using target annotation column: ",targColumn)
+      pa_message(paste0("Using target annotation column: ",targColumn))
       #print(class(annData[, targColumn]))
       if (is.null(ctrlObj)) {
         annInfo <- summary(as.factor(annData[, targColumn]))
-        message(paste(capture.output(annInfo)))
+        pa_message(paste(capture.output(annInfo)))
         ctrlStatus <- as.numeric(str_split_1(ctrlGrp,pattern = ",") %in% names(annInfo))
         if (any(ctrlStatus == 0) ) {
           stop("Non-tumor control group is not found in annotation: ", ctrlGrp)
@@ -210,14 +226,14 @@ prepareAtacInferCnvInput <- function(dataPath = "",
         if (!inherits(ctrlObj, "Seurat")) {
           stop("Non-tumor external control input is not Seurat object!")
         }
-        message("Using external control (assigned as ExtControl)")
+        pa_message("Using external control (assigned as ExtControl)")
         #print(ctrlObj)
         ctrlGrp <- "ExtControl"
       }
 
     }
   } else {
-      message("Using existing Signac/Seurat object")
+      pa_message("Using existing Signac/Seurat object")
       if (!inherits(inObj, "Seurat")) {
         stop("Pre-computed input object is not Seurat object!")
       }
@@ -231,13 +247,13 @@ prepareAtacInferCnvInput <- function(dataPath = "",
       }
       if (is.null(ctrlObj)) {
         annInfo <- summary(as.factor(annData[, targColumn]))
-        message(paste(capture.output(annInfo)))
+        pa_message(paste(capture.output(annInfo)))
         ctrlStatus <- as.numeric(str_split_1(ctrlGrp,pattern = ",") %in% names(annInfo))
         if (any(ctrlStatus == 0) ) {
           stop("Non-tumor control group is not found in annotation: ", ctrlGrp)
         }
       } else {
-         message("Merge with external control object")
+         pa_message("Merge with external control object")
          mb <- mergeWithControl(mb,ctrlObj,targColumn)
          ctrlGrp <- "ExtControl"
          #print(head(mb@meta.data))
@@ -246,7 +262,7 @@ prepareAtacInferCnvInput <- function(dataPath = "",
 
   resDir <- paste0(resDir,"/") # make sure subfolder usage
   if (!(dir.exists(resDir))) {
-    message("Creating result directory: ", resDir)
+    pa_message(paste0("Creating result directory: ", resDir))
     dir.create(resDir)
   }
 
@@ -258,33 +274,35 @@ prepareAtacInferCnvInput <- function(dataPath = "",
   }
 
   if (is.null(inObj)) {
-    message("Prepare input data...")
-    mb <- prepareAnalysis(mb, resDir, sId, annData, targColumn, ctrlObj, performGA)
+    pa_message("Prepare input data...")
+    mb <- prepareAnalysis(mb, resDir, sId, annData, targColumn, ctrlObj,
+                          performGA, verbose)
   }
 
-  message("Save signal...")
+  pa_message("Save signal...")
   saveCnvInput(mb, resDir, sId, targColumn)
   if (!is.null(binSize)) {
-    message("Re-format input signal matrix for bins of size ", binSize)
+    pa_message(paste0("Re-format input signal matrix for bins of size ", binSize))
     mb <- aggregateBins(mb, resDir, sId, binSize, chromLength)
   }
   #print(head(mb@meta.data))
   if (metaCells) {
-    message("Forming meta-cells...")
-    message(targColumn)
+    pa_message("Forming meta-cells...")
+    pa_message(targColumn)
     if (is.numeric(metaCells)) {
-      message("Using custom meta-cell count...")
+      pa_message("Using custom meta-cell count...")
       metaCount <- metaCells
     } else {
-      message("Using default meta-cell count...")
+      pa_message("Using default meta-cell count...")
       metaCount <- 5
     }
-    extractMetacells(resDir, sId, mb, targColumn, metacell_content = metaCount )
+    extractMetacells(resDir, sId, mb, targColumn,
+                     metacell_content = metaCount, verbose )
   }
 
-  message("Write configuration...")
+  pa_message("Write configuration...")
   writeConfig(resDir, sId, ctrlGrp, binSize, metaCells)
-  message("Prepared input.")
+  pa_message("Prepared input.")
 
   invisible(NULL)
 

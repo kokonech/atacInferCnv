@@ -12,6 +12,7 @@ runAtacInferCnv(
   addDenoise = TRUE,
   clusterRefs = FALSE,
   smoothMethod = "runmeans",
+  verbose = TRUE,
   ...
 )
 }
@@ -30,6 +31,9 @@ then no clustering is performed and provided annoitation used for the formation 
 \item{clusterRefs}{Cluster also reference (InferCNV param). Default: FALSE}
 
 \item{smoothMethod}{Method for smoothing (InferCNV param). Default: runmeans}
+
+\item{verbose}{Detailed output, progress messages, and diagnostic information.
+If deactivated InferCnv log is saved to file infercnv.log. Default: TRUE}
 
 \item{...}{Other parameters to provide for infercnv::run, more details in documentation of this function}
 }

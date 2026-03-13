@@ -4,7 +4,14 @@
 \alias{extractMetacells}
 \title{Compute meta-cells out of the main}
 \usage{
-extractMetacells(resDir, sId, sample, targColumn, metacell_content = 5)
+extractMetacells(
+  resDir,
+  sId,
+  sample,
+  targColumn,
+  metacell_content = 5,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{resDir}{Path to the result directory}
@@ -16,6 +23,8 @@ extractMetacells(resDir, sId, sample, targColumn, metacell_content = 5)
 \item{targColumn}{Name of annotation column to split}
 
 \item{metacell_content}{Amount of cells for adjustment, default n=5}
+
+\item{verbose}{Detailed output, progress messages, default TRUE}
 }
 \value{
 Invisibly returns NULL.

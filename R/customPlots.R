@@ -4,8 +4,8 @@
 #' This function creates a plot for CNV assigned/identified subclones
 #' @param resDir Path to the result directory with input
 #' @param plot Set TRUE to output plot to the screen. Default: TRUE
-#' @param save Set TRUE to save plot to the result directory
-#'
+#' @param save Set TRUE to save plot to the result directory. Default: FALSE
+#' @param verbose Detailed output, progress messages, default TRUE
 #' @return Invisibly returns NULL.
 #' @examples
 #' resPath = tempfile()
@@ -17,7 +17,7 @@
 #' plotCnvBlocks(resPath)
 #' @export
 
-plotCnvBlocks <- function( resDir, plot = TRUE, save = FALSE) {
+plotCnvBlocks <- function( resDir, plot = TRUE, save = FALSE, verbose = TRUE) {
 
   cnvDir <- paste0(resDir,"/sample_infercnv")
   if (!(dir.exists(cnvDir))) {
@@ -25,8 +25,9 @@ plotCnvBlocks <- function( resDir, plot = TRUE, save = FALSE) {
   }
 
   infercnv_obj <- readRDS(paste0(cnvDir, "/run.final.infercnv_obj"))
-
-  message("Load InferCNV result...")
+  if (verbose) {
+    message("Load InferCNV result...")
+  }
 
   obsFile <- paste0(cnvDir,"/infercnv.observations.txt")
   if (file.exists(obsFile)) {
@@ -71,14 +72,18 @@ plotCnvBlocks <- function( resDir, plot = TRUE, save = FALSE) {
 
 
   for (targ in blocks) {
-    message(targ)
+    if (verbose) {
+      message(targ)
+    }
     if (targ == "Full") {
         vals<-rowMeans(cnvMtx)
     } else {
       if (infercnv_obj@options$k_obs_groups  == 1) {
         cellIds <-names(infercnv_obj@tumor_subclusters$subclusters[[targ]][[1]])
         if (sum(cellIds %in% colnames(cnvMtx)) == 0) {
-          message("Skipping...")
+          if (verbose) {
+            message("Skipping...")
+          }
           next
         }
       } else {

@@ -5,18 +5,21 @@
 #' @param sample Input Seurat object to split
 #' @param targColumn Name of annotation column to split
 #' @param metacell_content Amount of cells for adjustment, default n=5
+#' @param verbose Detailed output, progress messages, default TRUE
 #' @return Invisibly returns NULL.
 #'
-extractMetacells <- function(resDir, sId, sample, targColumn, metacell_content = 5) {
+extractMetacells <- function(resDir, sId, sample, targColumn, metacell_content = 5, verbose = TRUE) {
 
   # Checking list:
   #Seurat::Idents(sample) <- sample$cluster_names
-  message("Number of cells for meta-cell formation:",metacell_content)
   #print(targColumn)
   targAnn <- factor(sample[[targColumn,drop=TRUE]])
   #print(targAnn)
   rawCounts <- sample@assays$ATAC@counts
   #print(dim(rawCounts))
+  if (verbose) {
+    message("Number of cells for meta-cell formation: ",5)
+  }
 
   # Will store all the metacells. The test column will be removed at the end.
   whole_metacells <- data.frame(test = rownames(rawCounts), row.names = rownames(rawCounts))
@@ -33,8 +36,9 @@ extractMetacells <- function(resDir, sId, sample, targColumn, metacell_content =
   # for restored object
   for (cluster_id in levels(targAnn)){
     # custom version
-    #for (cluster_id in levels(sample$)){
-    message("Computing metacells for cluster", cluster_id)
+    if (verbose) {
+      message("Computing metacells for cluster ", cluster_id)
+    }
     # Will store the metacells per cluster.
     metacells <- data.frame(test = rownames(rawCounts), row.names = rownames(rawCounts))
     #chunksample <- sample[, sample$cluster_names == cluster_id]

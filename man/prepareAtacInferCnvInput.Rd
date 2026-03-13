@@ -16,7 +16,8 @@ prepareAtacInferCnvInput(
   binSize = NULL,
   chromLength = NULL,
   metaCells = FALSE,
-  performGA = TRUE
+  performGA = TRUE,
+  verbose = TRUE
 )
 }
 \arguments{
@@ -44,6 +45,8 @@ e.g. 500000 for 500 KBp. Default: NULL (not use this option)}
 \item{metaCells}{Set TRUE to use meta cells (n=5 cells will be used to merge) or assign a number of cells. Default: FALSE}
 
 \item{performGA}{Perform general analysis of scATAC-data (clustering, UMAP). Default: TRUE}
+
+\item{verbose}{Detailed output, progress messages, and diagnostic information. Default: TRUE}
 }
 \value{
 Invisibly returns NULL.
