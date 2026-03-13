@@ -60,6 +60,22 @@ test_that("atacInferCnv works correctly on toy data", {
                   regexp = "Making the final infercnv heatmap" )
   expect_true(file.exists(paste0(resPath,"/sample_infercnv/run.final.infercnv_obj")))
 
+  iObj <- readRDS(paste0(resPath,"/sample_infercnv/run.final.infercnv_obj"))
+
+  # check params
+  expect_true(iObj@options$k_obs_groups == 1)
+  expect_true(sum(iObj@options$chr_exclude == c("Y","MT")) == 2)
+
+  # check atac matrix
+  expect_true(nrow(iObj@expr.data) == 12952)
+  expect_true(ncol(iObj@expr.data) == 30)
+  expect_true(max(iObj@expr.data) > 1.5)
+
+  # check pre-defined clustering result
+  expect_true(length(iObj@tumor_subclusters$subclusters)  == 3)
+  expect_true(length(iObj@tumor_subclusters$subclusters$C1$C1)  == 16)
+  expect_true(length(iObj@tumor_subclusters$subclusters$C2$C2)  == 10)
+  expect_true(length(iObj@tumor_subclusters$subclusters$Normal$Normal) == 4)
 
 })
 

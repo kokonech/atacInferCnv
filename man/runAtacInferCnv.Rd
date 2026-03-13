@@ -13,6 +13,7 @@ runAtacInferCnv(
   clusterRefs = FALSE,
   smoothMethod = "runmeans",
   verbose = TRUE,
+  returnObj = FALSE,
   ...
 )
 }
@@ -35,10 +36,12 @@ then no clustering is performed and provided annoitation used for the formation 
 \item{verbose}{Detailed output, progress messages, and diagnostic information.
 If deactivated InferCnv log is saved to file infercnv.log. Default: TRUE}
 
+\item{returnObj}{Return InferCNV object to work with futhert. Default: FALSE}
+
 \item{...}{Other parameters to provide for infercnv::run, more details in documentation of this function}
 }
 \value{
-Invisibly returns NULL.
+Invisibly returns NULL or InferCnv object if requested.
 }
 \description{
 This function calls InferCNV from generated input. It has support for all

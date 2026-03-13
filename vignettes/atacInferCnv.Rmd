@@ -39,7 +39,7 @@ resPath = tempfile()
 
 atacInferCNV analysis is based on two main steps: 1) process the input data, adjust it for CNV calling and 2) launch [inferCnv](https://www.bioconductor.org/packages/release/bioc/html/infercnv.html) on this custom generated input.
 
-First step is the function that processes input data to prepare it for [InferCnv](https://www.bioconductor.org/packages/release/bioc/html/infercnv.html). It has multiple options, but requires name of the column in the annotation to distinguish tumor vs normal as well as the name of normal cell type that will be used as a reference in case if normal cells are present in the input dataset.
+First step is the function that processes input data to prepare it for [InferCnv](https://www.bioconductor.org/packages/release/bioc/html/infercnv.html). It has multiple options, but requires name of the column in the annotation to distinguish tumor vs normal as well as the name of normal cell type that will be used as a reference in case if normal cells are present in the input dataset. This command performs specific processing for the data based on usage of [Signac](https://github.com/stuart-lab/signac) R package application on scATAC-seq data and prepares the input for InferCnv:
 
 ```{r quick-start-3,  message=FALSE, warning=FALSE}
 prepareAtacInferCnvInput(inPath,sAnn,resPath,
@@ -47,7 +47,7 @@ prepareAtacInferCnvInput(inPath,sAnn,resPath,
                           ctrlGrp = "Normal")
 ```
 
-This command performs initial processing for the data based on standard [Signac](https://github.com/stuart-lab/signac) R package application on scATAC-seq data and prepares the input for InferCnv. The results are saved in a specific format. Main generated output is saved in result folder:
+The results are saved in a specific format. Main generated output is saved in result folder:
 
 ```{r quick-start-31,  message=FALSE, warning=FALSE}
 list.files(resPath)

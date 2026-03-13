@@ -12,8 +12,9 @@
 #' @param smoothMethod Method for smoothing (InferCNV param). Default: runmeans
 #' @param verbose Detailed output, progress messages, and diagnostic information.
 #' If deactivated InferCnv log is saved to file infercnv.log. Default: TRUE
+#' @param returnObj Return InferCNV object to work with further. Default: FALSE
 #' @param ... Other parameters to provide for infercnv::run, more details in documentation of this function
-#' @return Invisibly returns NULL.
+#' @return Invisibly returns NULL or InferCnv object if requested.
 #' @examples
 #' resPath = tempfile()
 #' inPath = system.file("extdata", "MB183_ATAC_subset.tsv.gz", package = "atacInferCnv")
@@ -28,7 +29,7 @@ runAtacInferCnv <- function(resDir, configFile = "infercnv_config.yml",
                             numClusters = 1, chrToExclude = c("Y","MT"),
                             addDenoise = TRUE, clusterRefs = FALSE,
                             smoothMethod = "runmeans", verbose = TRUE,
-                            ...) {
+                            returnObj = FALSE, ...) {
 
   if (!(dir.exists(resDir))) {
     stop("The result directory with InferCNV input does not exist:",resDir)
@@ -92,10 +93,9 @@ runAtacInferCnv <- function(resDir, configFile = "infercnv_config.yml",
                                ...
 
   )
-
-  if (!verbose) {
-    sink(NULL,type = "message")
+  if (returnObj) {
+    infercnv_obj
+  } else {
+    invisible(NULL)
   }
-
-  invisible(NULL)
 }
