@@ -1,3 +1,15 @@
+VERSION 0.99.2
+--------------
+
+    Updates for Bioconductor submission:
+    * Add support for plot to save to file
+    * Allow to contro output as verbose
+    * Clean dependencies
+    * Updates in documentation: details, example plots
+    * Updates to testthat: extension of tests
+    * Updates to  DESCRIPTION
+
+
 VERSION 0.99.1
 --------------
 

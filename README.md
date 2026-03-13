@@ -7,7 +7,15 @@ For questions/comments: please create a github issue or contact the author direc
 
 ## Installation ##
 
-Installation can be performed via devtools. For this purpose download the repo to a folder. 
+Main installiation (after acceptance in biocondcutor):
+
+```
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+BiocManager::install("atacInferCnv")
+```
+
+Installation can be also performed via devtools from source. For this purpose download the repo to a folder. 
 Afterwards run command: 
 
 ```
