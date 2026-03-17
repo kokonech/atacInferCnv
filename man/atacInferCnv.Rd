@@ -4,6 +4,10 @@
 \alias{atacInferCnv}
 \alias{atacInferCnv-package}
 \title{atacInferCnv: CNV inference from single-cell chromatin accessibility data}
+\value{
+The package-level help page is used for documentation only and does
+  not return a value.
+}
 \description{
 \code{atacInferCnv} provides tools for genome-wide inference, analysis,
 and visualization of copy number variation (CNV) from single cell

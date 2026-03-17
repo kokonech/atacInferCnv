@@ -1,5 +1,5 @@
-VERSION 0.99.3
---------------
+VERSION 0.99.3/4
+----------------
 
     Updates for Bioconductor submission:
     * Fix atacInferCnv log output control

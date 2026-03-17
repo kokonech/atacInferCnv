@@ -20,6 +20,8 @@
 #'   \item{\code{\link{plotCnvBlocks}}}{Visualize inferred CNV block profiles.}
 #' }
 #'
+#' @return The package-level help page is used for documentation only and does
+#'   not return a value.
 #' @name atacInferCnv
 #' @aliases atacInferCnv-package
 #' @keywords package
@@ -40,4 +42,3 @@
 #' @importFrom GenomeInfoDb keepSeqlevels
 #' @importFrom S4Vectors queryHits subjectHits
 NULL
-#> NULL
