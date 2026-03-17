@@ -14,7 +14,7 @@
 #' If deactivated InferCnv log is saved to file infercnv.log. Default: TRUE
 #' @param returnObj Return InferCNV object to work with further. Default: FALSE
 #' @param ... Other parameters to provide for infercnv::run, more details in documentation of this function
-#' @return Invisibly returns NULL or InferCnv object if requested.
+#' @return Invisibly returns NULL by default.
 #' @examples
 #' resPath = tempfile()
 #' inPath = system.file("extdata", "MB183_ATAC_subset.tsv.gz", package = "atacInferCnv")
@@ -93,6 +93,10 @@ runAtacInferCnv <- function(resDir, configFile = "infercnv_config.yml",
                                ...
 
   )
+  if (!verbose) {
+    sink(NULL,type = "message")
+  }
+
   if (returnObj) {
     infercnv_obj
   } else {
