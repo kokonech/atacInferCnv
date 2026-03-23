@@ -58,10 +58,10 @@ It includes signal matrix per cell (*sample_raw_counts.txt.gz)*, cells annotatio
 The second and final step is the wrapper function to launch InferCnv. It uses the generated configuration inside result path to customize the input:
 
 ```{r quick-start-4,  message=FALSE, warning=FALSE}
-runAtacInferCnv(resPath)
+iObj <- runAtacInferCnv(resPath,returnObj = TRUE)
 ```
 
-The generated output is saved inside the result path as infercnv subfolder:
+By default the function returns no output, but it's possible to return infercnv object to fully reflect command *infercnv::run()* using corresponding argument *returnObj*. In any case, all the generated output is saved inside the result path as infercnv subfolder:
 
 ```{r quick-start-41,  message=FALSE, warning=FALSE}
 list.files(paste0(resPath,"/sample_infercnv"))
@@ -69,10 +69,10 @@ list.files(paste0(resPath,"/sample_infercnv"))
 
 The function has specific parameters that require adjustment for ATAC-data such as for example number of clusters (numClusters). Importantly, it supports all options of the original inferCnv functions. These details as well as description of output could be checked from InferCnv [documentation](https://github.com/broadinstitute/inferCNV/wiki).
 
-atacInferCnv can also generate pseudo-bulk CNV images from the assigned in annotation (if numClusters = 1 assigned in runAtacInferCnv()) or identified subclones (if numClusters \> 1 in the same function). For this purpose use the corresponding function after performing the analysis:
+atacInferCnv can also generate pseudo-bulk CNV images from the assigned in annotation (if numClusters = 1 assigned in *runAtacInferCnv()*) or identified subclones (if numClusters \> 1 in the same function). For this purpose use the corresponding function after performing the analysis:
 
 ```{r quick-start-5,  message=FALSE, warning=FALSE}
-plotCnvBlocks(resPath)
+plotCnvBlocks(resPath,iObj)
 ```
 
 These figures show CNV patterns for full merged signal and for subclones without (C1) and with (C1) MYCN amplification in chr2.

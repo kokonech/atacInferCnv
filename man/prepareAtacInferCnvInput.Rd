@@ -21,13 +21,15 @@ prepareAtacInferCnvInput(
 )
 }
 \arguments{
-\item{dataPath}{Path to the input data in 10X format or ATAC counts matrix in txt format (gzipped)}
+\item{dataPath}{Path to the input data in 10X format or ATAC counts matrix
+in txt format (gzipped)}
 
 \item{annPath}{Path to annotation of the cells}
 
 \item{resDir}{Path to the result directory}
 
-\item{inObj}{Precomputed Seurat/Signac object with required input data (alternative for dataPath)}
+\item{inObj}{Pre-computed Seurat/Signac object with required input data
+(alternative for dataPath)}
 
 \item{sId}{Result name. Default: "Sample"}
 

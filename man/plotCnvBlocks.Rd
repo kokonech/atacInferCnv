@@ -4,10 +4,19 @@
 \alias{plotCnvBlocks}
 \title{Function to plot CNV blocks}
 \usage{
-plotCnvBlocks(resDir, plot = TRUE, save = FALSE, verbose = TRUE)
+plotCnvBlocks(
+  resDir,
+  infercnvObj = NULL,
+  plot = TRUE,
+  save = FALSE,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{resDir}{Path to the result directory with input}
+
+\item{infercnvObj}{InferCnv result object. Default: NULL
+If NULL, then the object will be loaded from result directory.}
 
 \item{plot}{Set TRUE to output plot to the screen. Default: TRUE}
 

@@ -4,16 +4,18 @@
 #' original inferCnv options.
 #' @param resDir Path to the result directory with input
 #' @param configFile Name of configuration file with InferCnv input data
-#' @param numClusters Number of clusters for hier. clustering. If equals one (by default)
-#' then no clustering is performed and provided annoitation used for the formation of CNV groups.
+#' @param numClusters Number of clusters for hier. clustering. If equals one
+#' (by default) then no clustering is performed and provided annotation
+#' used for the formation of CNV groups.
 #' @param chrToExclude Chromosomes to exclude. Default: Y,MT
-#' @param addDenoise Activate denoise (InferCNV param). Deafult: TRUE
+#' @param addDenoise Activate denoise (InferCNV param). Default: TRUE
 #' @param clusterRefs Cluster also reference (InferCNV param). Default: FALSE
 #' @param smoothMethod Method for smoothing (InferCNV param). Default: runmeans
-#' @param verbose Detailed output, progress messages, and diagnostic information.
+#' @param verbose Detailed output, progress message and diagnostic information.
 #' If deactivated InferCnv log is saved to file infercnv.log. Default: TRUE
 #' @param returnObj Return InferCNV object to work with further. Default: FALSE
-#' @param ... Other parameters to provide for infercnv::run, more details in documentation of this function
+#' @param ... Other parameters to provide for infercnv::run, more details
+#' in documentation of this function
 #' @return Invisibly returns NULL by default.
 #' @examples
 #' resPath = tempfile()

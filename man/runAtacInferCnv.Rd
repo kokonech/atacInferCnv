@@ -22,23 +22,25 @@ runAtacInferCnv(
 
 \item{configFile}{Name of configuration file with InferCnv input data}
 
-\item{numClusters}{Number of clusters for hier. clustering. If equals one (by default)
-then no clustering is performed and provided annoitation used for the formation of CNV groups.}
+\item{numClusters}{Number of clusters for hier. clustering. If equals one
+(by default) then no clustering is performed and provided annotation
+used for the formation of CNV groups.}
 
 \item{chrToExclude}{Chromosomes to exclude. Default: Y,MT}
 
-\item{addDenoise}{Activate denoise (InferCNV param). Deafult: TRUE}
+\item{addDenoise}{Activate denoise (InferCNV param). Default: TRUE}
 
 \item{clusterRefs}{Cluster also reference (InferCNV param). Default: FALSE}
 
 \item{smoothMethod}{Method for smoothing (InferCNV param). Default: runmeans}
 
-\item{verbose}{Detailed output, progress messages, and diagnostic information.
+\item{verbose}{Detailed output, progress message and diagnostic information.
 If deactivated InferCnv log is saved to file infercnv.log. Default: TRUE}
 
 \item{returnObj}{Return InferCNV object to work with further. Default: FALSE}
 
-\item{...}{Other parameters to provide for infercnv::run, more details in documentation of this function}
+\item{...}{Other parameters to provide for infercnv::run, more details
+in documentation of this function}
 }
 \value{
 Invisibly returns NULL by default.

@@ -3,6 +3,8 @@
 #'
 #' This function creates a plot for CNV assigned/identified subclones
 #' @param resDir Path to the result directory with input
+#' @param infercnvObj InferCnv result object. Default: NULL
+#' If NULL, then the object will be loaded from result directory.
 #' @param plot Set TRUE to output plot to the screen. Default: TRUE
 #' @param save Set TRUE to save plot to the result directory. Default: FALSE
 #' @param verbose Detailed output, progress messages, default TRUE
@@ -17,16 +19,25 @@
 #' plotCnvBlocks(resPath)
 #' @export
 
-plotCnvBlocks <- function( resDir, plot = TRUE, save = FALSE, verbose = TRUE) {
+plotCnvBlocks <- function( resDir, infercnvObj = NULL,
+                           plot = TRUE, save = FALSE, verbose = TRUE) {
 
   cnvDir <- paste0(resDir,"/sample_infercnv")
   if (!(dir.exists(cnvDir))) {
     stop("The result directory with InferCNV input does not exist:",resDir)
   }
 
-  infercnv_obj <- readRDS(paste0(cnvDir, "/run.final.infercnv_obj"))
   if (verbose) {
     message("Load InferCNV result...")
+  }
+
+  if (is.null(infercnvObj)) {
+    infercnv_obj <- readRDS(paste0(cnvDir, "/run.final.infercnv_obj"))
+  } else {
+    if (!inherits(infercnvObj, "infercnv")) {
+      stop("The input object is not infercnv  object!")
+    }
+    infercnv_obj <- infercnvObj
   }
 
   obsFile <- paste0(cnvDir,"/infercnv.observations.txt")

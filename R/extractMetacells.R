@@ -8,7 +8,8 @@
 #' @param verbose Detailed output, progress messages, default TRUE
 #' @return Invisibly returns NULL.
 #'
-extractMetacells <- function(resDir, sId, sample, targColumn, metacell_content = 5, verbose = TRUE) {
+extractMetacells <- function(resDir, sId, sample, targColumn,
+                             metacell_content = 5, verbose = TRUE) {
 
   # Checking list:
   #Seurat::Idents(sample) <- sample$cluster_names
@@ -22,7 +23,8 @@ extractMetacells <- function(resDir, sId, sample, targColumn, metacell_content =
   }
 
   # Will store all the metacells. The test column will be removed at the end.
-  whole_metacells <- data.frame(test = rownames(rawCounts), row.names = rownames(rawCounts))
+  whole_metacells <- data.frame(test = rownames(rawCounts),
+                                row.names = rownames(rawCounts))
 
 
   # Will store the complete annotation for the metacells.
@@ -40,12 +42,12 @@ extractMetacells <- function(resDir, sId, sample, targColumn, metacell_content =
       message("Computing metacells for cluster ", cluster_id)
     }
     # Will store the metacells per cluster.
-    metacells <- data.frame(test = rownames(rawCounts), row.names = rownames(rawCounts))
+    metacells <- data.frame(test = rownames(rawCounts),
+                            row.names = rownames(rawCounts))
     #chunksample <- sample[, sample$cluster_names == cluster_id]
     # Subset the sample by each cluster ID.
     #chunksample <- sample[, targAnn  == cluster_id]
-    # Get the count data as a data frame and transpose it so columns are GENES and rows are CELLS.
-    #countdata <- t(as.data.frame(Seurat::GetAssayData(chunksample, slot = "counts")))
+    # Get the count data as a data frame, columns are GENES and rows are CELLS.
     countdata <- t(as.data.frame(rawCounts[ ,targAnn  == cluster_id]))
     #print(head(countdata))
     # Get the possible amount of metacells.
@@ -55,7 +57,8 @@ extractMetacells <- function(resDir, sId, sample, targColumn, metacell_content =
       # Generate slice points for each metacell. i.e: 1-5, 6-10, 11-15...
       start <- ((i -1) * metacell_content + 1)
       end <- i * metacell_content
-      # Compute the slice as a data frame containing the sum of the subsetted cells. dims = 1 row (metacell), X columns (genes)
+      # Compute the slice as a data frame containing
+      # the sum of the subsetted cells. dims = 1 row (metacell), X genes
       slice <- as.data.frame(colSums(countdata[start:end, ]))
       # Get the name of the cells merged.
       cell_names <- rownames(countdata[start:end, ])

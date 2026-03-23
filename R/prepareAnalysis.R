@@ -111,10 +111,12 @@ saveCnvInput <- function(mb,resDir, sId, targColumn) {
 
 #' Prepare input for the CNV calling from scATAC-seq data
 #'
-#' @param dataPath Path to the input data in 10X format or ATAC counts matrix in txt format (gzipped)
+#' @param dataPath Path to the input data in 10X format or ATAC counts matrix
+#'  in txt format (gzipped)
 #' @param annPath Path to annotation of the cells
 #' @param resDir Path to the result directory
-#' @param inObj Precomputed Seurat/Signac object with required input data (alternative for dataPath)
+#' @param inObj Pre-computed Seurat/Signac object with required input data
+#'  (alternative for dataPath)
 #' @param sId Result name. Default: "Sample"
 #' @param targColumn Name of the target column in annotation. Default: "CellType"
 #' @param ctrlGrp Name for the reference control cell type. Could be several names, separated by comma. Default: "Normal"

@@ -15,15 +15,6 @@ if (!require("BiocManager", quietly = TRUE))
 BiocManager::install("atacInferCnv")
 ```
 
-Installation can be also performed via devtools from source. For this purpose download the repo to a folder. 
-Afterwards run command: 
-
-```
-library(devtools)
-install("path/to/the/source/code")
-library(atacInferCnv)
-```
-
 ## How to run the analysis ##
 
 The example input data is located [here](https://drive.google.com/drive/folders/1okTZxc4yeuv1U2BsSEEccn1tng-sLqu7?usp=drive_link). 
