@@ -13,7 +13,7 @@ writeConfig(resDir, sId, ctrlGrp = "Normal", binSize = NULL, meta = FALSE)
 
 \item{ctrlGrp}{Name for the reference control cell type}
 
-\item{binSize}{Size of the bin e.g. 100000 for 100Kbp}
+\item{binSize}{Size of the bin e.g. 100000 for 100 Kbp}
 
 \item{meta}{True if use meta cells, default false}
 }

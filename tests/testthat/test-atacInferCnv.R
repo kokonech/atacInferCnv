@@ -2,8 +2,10 @@ test_that("prepare input function parses data correctly", {
 
   ctrlId = "Normal"
   sId = "MB183_ATAC_test"
-  inPath = system.file("extdata", "MB183_ATAC_subset.tsv.gz", package = "atacInferCnv")
-  sAnn = system.file("extdata", "MB183_ATAC_subset.CNV_blocks_ann.txt", package = "atacInferCnv" )
+  inPath = system.file("extdata", "MB183_ATAC_subset.tsv.gz",
+                       package = "atacInferCnv")
+  sAnn = system.file("extdata", "MB183_ATAC_subset.CNV_blocks_ann.txt",
+                     package = "atacInferCnv" )
   resPath = "incorrect_path"
   # no result path
   expect_error(
@@ -43,8 +45,10 @@ test_that("atacInferCnv works correctly on toy data", {
 
   ctrlId = "Normal"
   sId = "MB183_ATAC_test"
-  inPath = system.file("extdata", "MB183_ATAC_subset.tsv.gz", package = "atacInferCnv")
-  sAnn = system.file("extdata", "MB183_ATAC_subset.CNV_blocks_ann_n30.txt", package = "atacInferCnv" )
+  inPath = system.file("extdata", "MB183_ATAC_subset.tsv.gz",
+                       package = "atacInferCnv")
+  sAnn = system.file("extdata", "MB183_ATAC_subset.CNV_blocks_ann_n30.txt",
+                     package = "atacInferCnv" )
   resPath = tempfile()
 
   expect_message(prepareAtacInferCnvInput(inPath, sAnn, resPath,
@@ -58,7 +62,8 @@ test_that("atacInferCnv works correctly on toy data", {
 
   expect_message( runAtacInferCnv(resPath),
                   regexp = "Making the final infercnv heatmap" )
-  expect_true(file.exists(paste0(resPath,"/sample_infercnv/run.final.infercnv_obj")))
+  expect_true(
+    file.exists(paste0(resPath,"/sample_infercnv/run.final.infercnv_obj")))
 
   iObj <- readRDS(paste0(resPath,"/sample_infercnv/run.final.infercnv_obj"))
 

@@ -4,8 +4,8 @@
 #' original inferCnv options.
 #' @param resDir Path to the result directory with input
 #' @param configFile Name of configuration file with InferCnv input data
-#' @param numClusters Number of clusters for hier. clustering. If equals one
-#' (by default) then no clustering is performed and provided annotation
+#' @param numClusters Number of clusters for hierarchical clustering. If equals
+#' one (by default) then no clustering is performed and provided annotation
 #' used for the formation of CNV groups.
 #' @param chrToExclude Chromosomes to exclude. Default: Y,MT
 #' @param addDenoise Activate denoise (InferCNV param). Default: TRUE
@@ -19,8 +19,10 @@
 #' @return Invisibly returns NULL by default.
 #' @examples
 #' resPath = tempfile()
-#' inPath = system.file("extdata", "MB183_ATAC_subset.tsv.gz", package = "atacInferCnv")
-#' sAnn = system.file("extdata", "MB183_ATAC_subset.CNV_blocks_ann_n30.txt", package = "atacInferCnv" )
+#' inPath = system.file("extdata", "MB183_ATAC_subset.tsv.gz",
+#'                       package = "atacInferCnv")
+#' sAnn = system.file("extdata", "MB183_ATAC_subset.CNV_blocks_ann_n30.txt",
+#'                       package = "atacInferCnv" )
 #' prepareAtacInferCnvInput(inPath,sAnn,resPath, targColumn = "cnvBlock",
 #'                          ctrlGrp = "Normal",performGA = FALSE)
 #' runAtacInferCnv(resPath)
@@ -82,7 +84,7 @@ runAtacInferCnv <- function(resDir, configFile = "infercnv_config.yml",
   assign("infercnv_obj", infercnv_obj, envir = .GlobalEnv)
 
   infercnv_obj <- infercnv::run(infercnv_obj ,
-                               # cutoff: 1 for SmartSeq, 0.1 for 10x Genomics, mean to meta
+                               # cutoff: 1 for SmartSeq, 0.1 for 10x Genomics
                                cutoff=cfg$cutOff,
                                out_dir=cfg$resName,
                                cluster_by_groups=groupUsage,

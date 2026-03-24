@@ -14,13 +14,16 @@ aggregateBins <- function(sample, resDir, sId, bin_size, chrom_lengths) {
   regions <- sample@assays$ATAC@ranges
   # adjust for chromosome size and extract signals matrix
   valid_chromosomes <- intersect(seqlevels(regions), names(chrom_lengths))
-  filtered_regions <- keepSeqlevels(regions, valid_chromosomes, pruning.mode = "coarse")
+  filtered_regions <- keepSeqlevels(regions, valid_chromosomes,
+                                    pruning.mode = "coarse")
   seqlengths(filtered_regions) <- chrom_lengths[seqlevels(filtered_regions)]
   #print(filtered_regions)
-  signal_matrix <- sample@assays$ATAC@counts[ gsub(":","-",as.character(filtered_regions)), ]
+  signal_matrix <-
+    sample@assays$ATAC@counts[ gsub(":","-",as.character(filtered_regions)), ]
 
   # tile into bins
-  bins <- tileGenome(seqlengths(filtered_regions), tilewidth = bin_size, cut.last.tile.in.chrom = TRUE)
+  bins <- tileGenome(seqlengths(filtered_regions), tilewidth = bin_size,
+                     cut.last.tile.in.chrom = TRUE)
   # overlap with bins
   region_bins <- findOverlaps(filtered_regions, bins)
 
@@ -29,8 +32,8 @@ aggregateBins <- function(sample, resDir, sId, bin_size, chrom_lengths) {
   targ_bins <- unique(subject_hits)
   num_bins <- length(bins)
   # use cpp-compiled function
-  binned_signal <- aggregate_bins_cpp_sparse(targ_bins, query_hits, subject_hits,
-                                              signal_matrix, num_bins)
+  binned_signal <- aggregate_bins_cpp_sparse(targ_bins,query_hits,
+                                subject_hits, signal_matrix, num_bins)
 
   # save result
   rownames(binned_signal) <- as.character(bins)
@@ -45,7 +48,8 @@ aggregateBins <- function(sample, resDir, sId, bin_size, chrom_lengths) {
   rownames(peakDf) <- paste0(  peakDf[,1],":",peakDf[,2],"-",peakDf[,3] )
   peakDf$seqnames <- gsub("chr","", peakDf$seqnames)
   summary(rownames(binned_signal) == rownames(peakDf))
-  write.table(peakDf, sprintf("%s/%s_cnv_ref.binsize_%d.txt", resDir, sId,bin_size),
+  write.table(peakDf,
+              sprintf("%s/%s_cnv_ref.binsize_%d.txt", resDir, sId,bin_size),
               col.names = FALSE,sep="\t",quote=FALSE)
 
   # assign and return novel matrix for possible further analysis: meta-cells

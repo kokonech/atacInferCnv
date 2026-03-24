@@ -9,10 +9,12 @@ pa_message <- function(msg) {
 
 
 mergeWithControl <- function(mb, ctrlObj, targColumn) {
-  # adjusted number of control cells should no go over 33% of number of tumor cells
+  # by default number of control cells <= 33% of number of tumor cells
+  # TODO: make a param
   expNumCtrlCells <- round( 0.33 * ncol(mb))
   if (ncol(ctrlObj) > expNumCtrlCells) {
-    pa_message(paste0("Adjust external control, decrease num cells to ",expNumCtrlCells))
+    pa_message(paste0("Adjust external control, decrease num cells to ",
+                      expNumCtrlCells))
     ctrlObj <- ctrlObj[ , seq_len(expNumCtrlCells)]
   }
   #print(ctrlObj)
@@ -239,18 +241,18 @@ prepareAtacInferCnvInput <- function(dataPath = "",
       if (!inherits(inObj, "Seurat")) {
         stop("Pre-computed input object is not Seurat object!")
       }
-      #if (!is.null(ctrlObj)) {
-      #  stop(paste0("Usage of external reference is not supported if pre-computed object is provided."))
-      #}
+
       mb <- inObj
       annData <- inObj@meta.data
       if (! (targColumn %in% colnames(annData) ) ) {
-        stop("Required annotation column is not available in pre-computed input object: ", targColumn)
+        stop("Required annotation column is not available
+             in pre-computed input object: ", targColumn)
       }
       if (is.null(ctrlObj)) {
         annInfo <- summary(as.factor(annData[, targColumn]))
         pa_message(paste(capture.output(annInfo)))
-        ctrlStatus <- as.numeric(str_split_1(ctrlGrp,pattern = ",") %in% names(annInfo))
+        ctrlStatus <- as.numeric(
+                  str_split_1(ctrlGrp,pattern = ",") %in% names(annInfo))
         if (any(ctrlStatus == 0) ) {
           stop("Non-tumor control group is not found in annotation: ", ctrlGrp)
         }
@@ -271,7 +273,8 @@ prepareAtacInferCnvInput <- function(dataPath = "",
 
   if (!is.null(binSize)) {
     if (is.null(chromLength)) {
-      stop("The chromosomes length vector is not provided for the bin size adjustment!")
+      stop("The chromosomes length vector is not provided
+              for the bin size adjustment!")
     }
   }
 
@@ -284,7 +287,7 @@ prepareAtacInferCnvInput <- function(dataPath = "",
   pa_message("Save signal...")
   saveCnvInput(mb, resDir, sId, targColumn)
   if (!is.null(binSize)) {
-    pa_message(paste0("Re-format input signal matrix for bins of size ", binSize))
+    pa_message(paste0("Re-format input signal matrix for bin size ", binSize))
     mb <- aggregateBins(mb, resDir, sId, binSize, chromLength)
   }
   #print(head(mb@meta.data))

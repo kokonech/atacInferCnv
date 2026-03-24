@@ -11,8 +11,10 @@
 #' @return Invisibly returns NULL.
 #' @examples
 #' resPath = tempfile()
-#' inPath = system.file("extdata", "MB183_ATAC_subset.tsv.gz", package = "atacInferCnv")
-#' sAnn = system.file("extdata", "MB183_ATAC_subset.CNV_blocks_ann_n30.txt", package = "atacInferCnv" )
+#' inPath = system.file("extdata", "MB183_ATAC_subset.tsv.gz",
+#'                       package = "atacInferCnv")
+#' sAnn = system.file("extdata", "MB183_ATAC_subset.CNV_blocks_ann_n30.txt",
+#'                       package = "atacInferCnv")
 #' prepareAtacInferCnvInput(inPath,sAnn,resPath, targColumn = "cnvBlock",
 #'                         ctrlGrp = "Normal", performGA = FALSE)
 #' runAtacInferCnv(resPath)
@@ -75,7 +77,8 @@ plotCnvBlocks <- function( resDir, infercnvObj = NULL,
   if (infercnv_obj@options$k_obs_groups  == 1) {
     blocks <- c("Full", names(infercnv_obj@tumor_subclusters$subclusters))
   } else {
-    hcBlocks <- cutree(infercnv_obj@tumor_subclusters$hc$all_observations, infercnv_obj@options$k_obs_groups )
+    hcBlocks <- cutree(infercnv_obj@tumor_subclusters$hc$all_observations,
+                       infercnv_obj@options$k_obs_groups )
     hcBlocksAdj <- paste0("C",hcBlocks)
     names(hcBlocksAdj) <- names(hcBlocks)
     blocks <- c("Full", unique(hcBlocksAdj))
@@ -90,7 +93,7 @@ plotCnvBlocks <- function( resDir, infercnvObj = NULL,
         vals<-rowMeans(cnvMtx)
     } else {
       if (infercnv_obj@options$k_obs_groups  == 1) {
-        cellIds <-names(infercnv_obj@tumor_subclusters$subclusters[[targ]][[1]])
+        cellIds<-names(infercnv_obj@tumor_subclusters$subclusters[[targ]][[1]])
         if (sum(cellIds %in% colnames(cnvMtx)) == 0) {
           if (verbose) {
             message("Skipping...")
@@ -107,7 +110,8 @@ plotCnvBlocks <- function( resDir, infercnvObj = NULL,
       adjCols <- rbPal(10)[as.numeric(cut(vals,breaks = 10))]
 
       plot(vals,pch=20,cex=0.3,
-               main=paste0("inferCNV signal:",targ), col=adjCols,ylim=c(cMin,cMax),
+               main=paste0("inferCNV signal:",targ),
+               col=adjCols,ylim=c(cMin,cMax),
                xlab="Chromosome", ylab="Modified expr",  axes=FALSE)
       abline(h=1, col="grey",lwd=1, lty=2)
       if (length(chrBreaks) > 0) {

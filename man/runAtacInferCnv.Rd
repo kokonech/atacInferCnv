@@ -22,8 +22,8 @@ runAtacInferCnv(
 
 \item{configFile}{Name of configuration file with InferCnv input data}
 
-\item{numClusters}{Number of clusters for hier. clustering. If equals one
-(by default) then no clustering is performed and provided annotation
+\item{numClusters}{Number of clusters for hierarchical clustering. If equals
+one (by default) then no clustering is performed and provided annotation
 used for the formation of CNV groups.}
 
 \item{chrToExclude}{Chromosomes to exclude. Default: Y,MT}
@@ -51,8 +51,10 @@ original inferCnv options.
 }
 \examples{
 resPath = tempfile()
-inPath = system.file("extdata", "MB183_ATAC_subset.tsv.gz", package = "atacInferCnv")
-sAnn = system.file("extdata", "MB183_ATAC_subset.CNV_blocks_ann_n30.txt", package = "atacInferCnv" )
+inPath = system.file("extdata", "MB183_ATAC_subset.tsv.gz",
+                      package = "atacInferCnv")
+sAnn = system.file("extdata", "MB183_ATAC_subset.CNV_blocks_ann_n30.txt",
+                      package = "atacInferCnv" )
 prepareAtacInferCnvInput(inPath,sAnn,resPath, targColumn = "cnvBlock",
                          ctrlGrp = "Normal",performGA = FALSE)
 runAtacInferCnv(resPath)
