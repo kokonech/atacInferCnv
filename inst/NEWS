@@ -1,3 +1,11 @@
+VERSION 0.99.5
+--------------
+
+    Updates for Bioconductor submission:
+    * Add output of infercnv object to documentation
+    * Add ORCID to DESCRIPTION, clean README
+    * Fix text typos, other minor fixes
+ 
 VERSION 0.99.3/4
 ----------------
 

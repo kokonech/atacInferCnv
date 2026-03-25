@@ -22,9 +22,11 @@ By default to launch atacInferCnv, the required input are:
 -   full epigenetic signals raw matrix;
 -   annotation of cells to distinguish tumor and normal.
 
-To demonstrate how to apply atacInferCNV scAtac-seq data we prepared example test set from a medulloblastoma Group 3/4 MYCN tumor case snMultiomics-seq data.
+To demonstrate how to apply atacInferCNV scAtac-seq data we prepared example 
+test set from a medulloblastoma Group 3/4 MYCN tumor case snMultiomics-seq data.
 
-The default input data for the package are file path to raw signals matrix in text format and file path to cells annotation. The annotation of cells is required to distinguish tumor vs normal cells, that are applied as reference control. Typical format of annotation is a tab-delimited table with row names (cell IDs) and only with column names in the first line.
+The default input data for the package are file path to raw signals matrix in 
+text format and file path to cells annotation. The annotation of cells is required to distinguish tumor vs normal cells, that are applied as reference control. Typical format of annotation is a tab-delimited table with row names (cell IDs) and only with column names in the first line.
 
 For input matrix other data formats are also supported, as described further, but here we will start with the path to the standard matrix and annotation in text format. For the launch also the path and name of the result should be stated. We will use temporary folder for this:
 
@@ -37,9 +39,11 @@ sAnn = system.file("extdata", "MB183_ATAC_subset.CNV_blocks_ann.txt",
 resPath = tempfile() 
 ```
 
-atacInferCNV analysis is based on two main steps: 1) process the input data, adjust it for CNV calling and 2) launch [inferCnv](https://www.bioconductor.org/packages/release/bioc/html/infercnv.html) on this custom generated input.
+atacInferCNV analysis is based on two main steps: 1) process the input data, 
+adjust it for CNV calling and 2) launch [inferCnv](https://bioconductor.org/packages/release/bioc/html/infercnv.html) 
+on this custom generated input.
 
-First step is the function that processes input data to prepare it for [InferCnv](https://www.bioconductor.org/packages/release/bioc/html/infercnv.html). It has multiple options, but requires name of the column in the annotation to distinguish tumor vs normal as well as the name of normal cell type that will be used as a reference in case if normal cells are present in the input dataset. This command performs specific processing for the data based on usage of [Signac](https://github.com/stuart-lab/signac) R package application on scATAC-seq data and prepares the input for InferCnv:
+First step is the function that processes input data to prepare it for [InferCnv](https://bioconductor.org/packages/release/bioc/html/infercnv.html). It has multiple options, but requires name of the column in the annotation to distinguish tumor vs normal as well as the name of normal cell type that will be used as a reference in case if normal cells are present in the input dataset. This command performs specific processing for the data based on usage of [Signac](https://github.com/stuart-lab/signac) R package application on scATAC-seq data and prepares the input for InferCnv:
 
 ```{r quick-start-3,  message=FALSE, warning=FALSE}
 prepareAtacInferCnvInput(inPath,sAnn,resPath,

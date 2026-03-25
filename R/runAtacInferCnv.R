@@ -25,7 +25,7 @@
 #'                       package = "atacInferCnv" )
 #' prepareAtacInferCnvInput(inPath,sAnn,resPath, targColumn = "cnvBlock",
 #'                          ctrlGrp = "Normal",performGA = FALSE)
-#' runAtacInferCnv(resPath)
+#' resObj <- runAtacInferCnv(resPath, returnObj = TRUE)
 #'
 #' @export
 #'

@@ -68,27 +68,26 @@ extractMetacells <- function(resDir, sId, sample, targColumn,
       # Add the metacell mapping to the cells in the sample.
       sample$metacell_mapping[colnames(sample) %in% cell_names] <- col_name
     }
-    # Delete the test column as we already have more than 1 column in our data frame.
+    # Delete the test column as we already have more than 1 column in data frame
     metacells[["test"]] <- NULL
-    # Will contain the annotation of the generated metacells. Columns: cluster identities. Rows: each metacell.
-    annotation <- data.frame(cluster_names = colnames(metacells), row.names = colnames(metacells))
-    # Replace the dummy cluster_names column's values for the actual label for the cluster.
+    # annotation of the generated metacells.
+    # Columns: cluster identities. Rows: each metacell.
+    annotation <- data.frame(cluster_names = colnames(metacells),
+                             row.names = colnames(metacells))
+    # Replace the cluster_names column's with the actual label for the cluster.
     annotation$cluster_names <- cluster_id
     # Add the annotation data and the metacell data to the "whole" dataframe. \
-    # In the end: Number of Columns for metacell object = Number of rows for annotation object.
+    # Number of Columns for metacell object = Number of rows for annotation
     whole_metacells <- cbind(whole_metacells, metacells)
     whole_annotation <- rbind(whole_annotation, annotation)
   }
 
   # Delete the test row from the global annotation data.
-  whole_annotation <- whole_annotation[!rownames(whole_annotation) %in% c("test"), , drop = FALSE]
+  whole_annotation <-
+    whole_annotation[!rownames(whole_annotation) %in% c("test"), , drop = FALSE]
 
   # Delete the test column from the global metacell data.
   whole_metacells$test <- NULL
-
-  # Path and name of the annotation file that will be used in the inferCNV call.
-  #cnv_analysis_folder <- "" # Path to the folder that will store the annotation file.
-  #dir.create(cnv_analysis_folder, recursive = TRUE)
 
   annotation_file <- sprintf("%s/%s_annotation_metacells.tsv", resDir, sId)
 

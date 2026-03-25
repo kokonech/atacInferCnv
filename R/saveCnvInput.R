@@ -9,7 +9,8 @@ saveCnvInput <- function(mb, resDir,sId,  targColumn="") {
   } else {
     annTable2 <- annTable[,targColumn,drop=FALSE]
   }
-  write.table(annTable2, paste0(resDir,sId,"_cnv_ann.txt") ,col.names = FALSE,sep="\t",quote=FALSE)
+  write.table(annTable2, paste0(resDir,sId,"_cnv_ann.txt") ,
+              col.names = FALSE,sep="\t",quote=FALSE)
 
   gz1 <- gzfile(paste0(resDir,sId,"_raw_counts.txt.gz"), "w")
   rawCounts <- as.matrix(mb@assays$ATAC@counts)
@@ -27,5 +28,6 @@ saveCnvInput <- function(mb, resDir,sId,  targColumn="") {
   rownames(peakDf) <- paste0(  peakDf[,1],"-",peakDf[,2],"-",peakDf[,3] )
   peakDf$seqnames <- gsub("chr","", peakDf$seqnames)
   summary(rownames(rawCounts) %in% rownames(peakDf))
-  write.table(peakDf, paste0(resDir,sId,"_cnv_ref.txt") ,col.names = FALSE,sep="\t",quote=FALSE)
+  write.table(peakDf, paste0(resDir,sId,"_cnv_ref.txt") ,
+              col.names = FALSE,sep="\t",quote=FALSE)
 }

@@ -46,7 +46,8 @@ plotCnvBlocks <- function( resDir, infercnvObj = NULL,
   if (file.exists(obsFile)) {
     cnvMtx <- read.table(obsFile,check.names = FALSE)
   } else {
-    warning("Output file infercnv.observations.txt does not exist in result folder, using expr matrix.\n
+    warning("Output file infercnv.observations.txt does not exist in result
+           folder, using expr matrix.\n
          Update InferCnv version (>= 1.3.3 ) to support normalized output.")
     cIds <- unlist(infercnv_obj@observation_grouped_cell_indices)
     cnvMtx <- infercnv_obj@expr.data[ ,cIds]

@@ -31,7 +31,8 @@ mergeWithControl <- function(mb, ctrlObj, targColumn) {
 }
 
 
-prepareAnalysis <- function(mb, resDir, sId, annData, targColumn, ctrlObj, performGA, paVerbose) {
+prepareAnalysis <- function(mb, resDir, sId, annData, targColumn,
+                            ctrlObj, performGA, paVerbose) {
   cIds <- intersect(rownames(annData), rownames(mb@meta.data))
   if (length(cIds) == 0) {
     stop("No overlapping cells IDs in annotation!")
@@ -40,7 +41,8 @@ prepareAnalysis <- function(mb, resDir, sId, annData, targColumn, ctrlObj, perfo
   mb <- subset(mb, cells= cIds)
   #mb <- mb[ ,cIds]
   #print(summary(rownames(mb@meta.data) == cIds))
-  mb@meta.data <- cbind(mb@meta.data,  annData[rownames(mb@meta.data),targColumn])
+  mb@meta.data <- cbind(mb@meta.data,
+                        annData[rownames(mb@meta.data),targColumn])
   colnames(mb@meta.data)[ncol(mb@meta.data)] <- targColumn
 
   if (!is.null(ctrlObj)) {
@@ -61,16 +63,19 @@ prepareAnalysis <- function(mb, resDir, sId, annData, targColumn, ctrlObj, perfo
 
     ndim <- 30 # default 30
 
-    mb <- RunUMAP(object = mb, reduction = 'lsi', dims = 2:ndim,verbose = paVerbose)
-    mb <- FindNeighbors(object = mb, reduction = 'lsi', dims = 2:ndim,verbose = paVerbose)
+    mb <- RunUMAP(object = mb, reduction = 'lsi', dims = 2:ndim,
+                  verbose = paVerbose)
+    mb <- FindNeighbors(object = mb, reduction = 'lsi', dims = 2:ndim,
+                        verbose = paVerbose)
     mb <- FindClusters(object = mb, verbose = paVerbose, algorithm = 3)
 
     pdf(paste0(resDir,sId,"_UMAP.pdf"),width = 8, height = 6)
     # print REQUIRED for ggplot2 output
     print(DimPlot(object = mb, pt.size=1, label=TRUE))
     if (nchar(targColumn) > 0) {
+      # REQUIRED for ggplot2 output
       print(DimPlot(mb, reduction = "umap",
-                    label = TRUE,group.by = targColumn)) # REQUIRED for ggplot2 output
+                    label = TRUE,group.by = targColumn))
     }
     dev.off()
   }
@@ -90,7 +95,8 @@ saveCnvInput <- function(mb,resDir, sId, targColumn) {
   #if (targColumn == "seurat_clusters" ) {
   #    annTable2$seurat_clusters <- paste0("cl",annTable2$seurat_clusters)
   #}
-  write.table(annTable2, paste0(resDir,sId,"_cnv_ann.txt") ,col.names = FALSE,sep="\t",quote=FALSE)
+  write.table(annTable2, paste0(resDir,sId,"_cnv_ann.txt") ,
+              col.names = FALSE,sep="\t",quote=FALSE)
 
   gz1 <- gzfile(paste0(resDir,sId,"_raw_counts.txt.gz"), "w")
   rawCounts <- as.matrix(mb@assays$ATAC@counts)
@@ -108,33 +114,42 @@ saveCnvInput <- function(mb,resDir, sId, targColumn) {
   rownames(peakDf) <- paste0(  peakDf[,1],"-",peakDf[,2],"-",peakDf[,3] )
   peakDf$seqnames <- gsub("chr","", peakDf$seqnames)
   summary(rownames(rawCounts) %in% rownames(peakDf))
-  write.table(peakDf, paste0(resDir,sId,"_cnv_ref.txt") ,col.names = FALSE,sep="\t",quote=FALSE)
+  write.table(peakDf, paste0(resDir,sId,"_cnv_ref.txt"),
+              col.names = FALSE,sep="\t",quote=FALSE)
 }
 
 #' Prepare input for the CNV calling from scATAC-seq data
 #'
 #' @param dataPath Path to the input data in 10X format or ATAC counts matrix
 #'  in txt format (gzipped)
-#' @param annPath Path to annotation of the cells
+#' @param annPath Path to annotation of the cells in tab-delimited format
 #' @param resDir Path to the result directory
 #' @param inObj Pre-computed Seurat/Signac object with required input data
 #'  (alternative for dataPath)
 #' @param sId Result name. Default: "Sample"
-#' @param targColumn Name of the target column in annotation. Default: "CellType"
-#' @param ctrlGrp Name for the reference control cell type. Could be several names, separated by comma. Default: "Normal"
-#' @param ctrlObj Seurat/Signac object to use as non-tumor control. Default: NULL
-#' @param binSize Apply custom bin size to combine signals in windows for CNV calling
-#' e.g. 500000 for 500 KBp. Default: NULL (not use this option)
-#' @param chromLength Numeric vector of chromosome sizes, specific for genome. Default: NULL
-#' @param metaCells Set TRUE to use meta cells (n=5 cells will be used to merge) or assign a number of cells. Default: FALSE
-#' @param performGA Perform general analysis of scATAC-data (clustering, UMAP). Default: TRUE
-#' @param verbose Detailed output, progress messages, and diagnostic information. Default: TRUE
+#' @param targColumn Name of the target column in annotation. Default:CellType
+#' @param ctrlGrp Name for the reference control cell type. Could be several
+#' names, separated by comma. Default: "Normal"
+#' @param ctrlObj Seurat/Signac object to use as non-tumor control. Default:NULL
+#' @param binSize Apply custom bin size to combine signals in windows for CNV
+#' calling e.g. 500000 for 500 KBp. Default: NULL (not use this option)
+#' @param chromLength Numeric vector of chromosome sizes, specific for genome.
+#'  Default: NULL
+#' @param metaCells Set TRUE to use meta cells (n=5 cells by default) or assign
+#'  a number of cells. Default: FALSE
+#' @param performGA Perform general analysis of scATAC-data (clustering, UMAP).
+#'  Default: TRUE
+#' @param verbose Detailed output, progress messages, and diagnostic
+#' information. Default: TRUE
 #' @return Invisibly returns NULL.
 #' @examples
 #' resPath = tempfile()
-#' inPath = system.file("extdata", "MB183_ATAC_subset.tsv.gz", package = "atacInferCnv")
-#' sAnn = system.file("extdata", "MB183_ATAC_subset.CNV_blocks_ann_n30.txt", package = "atacInferCnv" )
-#' prepareAtacInferCnvInput(inPath,sAnn,resPath, targColumn = "cnvBlock", ctrlGrp = "Normal",performGA = FALSE)
+#' inPath = system.file("extdata", "MB183_ATAC_subset.tsv.gz",
+#'                       package = "atacInferCnv")
+#' sAnn = system.file("extdata", "MB183_ATAC_subset.CNV_blocks_ann_n30.txt",
+#'                      package = "atacInferCnv" )
+#' prepareAtacInferCnvInput(inPath,sAnn,resPath, targColumn = "cnvBlock",
+#'                           ctrlGrp = "Normal",performGA = FALSE)
 #'
 #' @export
 #'
@@ -175,7 +190,8 @@ prepareAtacInferCnvInput <- function(dataPath = "",
           fragpath <- paste0(dataPath, "/fragments.tsv.gz")
         } else {
           stop("Input feature counts matrix is not found in path: ",dataPath,
-             "\nExpected formats: filtered_feature_bc_matrix.h5 or filtered_peak_bc_matrix.h5")
+             "\nExpected formats: filtered_feature_bc_matrix.h5
+             or filtered_peak_bc_matrix.h5")
         }
       } else {
         pa_message("10X scMulti-omics format identified")
@@ -222,7 +238,9 @@ prepareAtacInferCnvInput <- function(dataPath = "",
       if (is.null(ctrlObj)) {
         annInfo <- summary(as.factor(annData[, targColumn]))
         pa_message(paste(capture.output(annInfo)))
-        ctrlStatus <- as.numeric(str_split_1(ctrlGrp,pattern = ",") %in% names(annInfo))
+        ctrlStatus <- as.numeric(
+          str_split_1(ctrlGrp,pattern = ",") %in% names(annInfo)
+          )
         if (any(ctrlStatus == 0) ) {
           stop("Non-tumor control group is not found in annotation: ", ctrlGrp)
         }

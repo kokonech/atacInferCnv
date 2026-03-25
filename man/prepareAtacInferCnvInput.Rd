@@ -24,7 +24,7 @@ prepareAtacInferCnvInput(
 \item{dataPath}{Path to the input data in 10X format or ATAC counts matrix
 in txt format (gzipped)}
 
-\item{annPath}{Path to annotation of the cells}
+\item{annPath}{Path to annotation of the cells in tab-delimited format}
 
 \item{resDir}{Path to the result directory}
 
@@ -33,22 +33,27 @@ in txt format (gzipped)}
 
 \item{sId}{Result name. Default: "Sample"}
 
-\item{targColumn}{Name of the target column in annotation. Default: "CellType"}
+\item{targColumn}{Name of the target column in annotation. Default:CellType}
 
-\item{ctrlGrp}{Name for the reference control cell type. Could be several names, separated by comma. Default: "Normal"}
+\item{ctrlGrp}{Name for the reference control cell type. Could be several
+names, separated by comma. Default: "Normal"}
 
-\item{ctrlObj}{Seurat/Signac object to use as non-tumor control. Default: NULL}
+\item{ctrlObj}{Seurat/Signac object to use as non-tumor control. Default:NULL}
 
-\item{binSize}{Apply custom bin size to combine signals in windows for CNV calling
-e.g. 500000 for 500 KBp. Default: NULL (not use this option)}
+\item{binSize}{Apply custom bin size to combine signals in windows for CNV
+calling e.g. 500000 for 500 KBp. Default: NULL (not use this option)}
 
-\item{chromLength}{Numeric vector of chromosome sizes, specific for genome. Default: NULL}
+\item{chromLength}{Numeric vector of chromosome sizes, specific for genome.
+Default: NULL}
 
-\item{metaCells}{Set TRUE to use meta cells (n=5 cells will be used to merge) or assign a number of cells. Default: FALSE}
+\item{metaCells}{Set TRUE to use meta cells (n=5 cells by default) or assign
+a number of cells. Default: FALSE}
 
-\item{performGA}{Perform general analysis of scATAC-data (clustering, UMAP). Default: TRUE}
+\item{performGA}{Perform general analysis of scATAC-data (clustering, UMAP).
+Default: TRUE}
 
-\item{verbose}{Detailed output, progress messages, and diagnostic information. Default: TRUE}
+\item{verbose}{Detailed output, progress messages, and diagnostic
+information. Default: TRUE}
 }
 \value{
 Invisibly returns NULL.
@@ -58,8 +63,11 @@ Prepare input for the CNV calling from scATAC-seq data
 }
 \examples{
 resPath = tempfile()
-inPath = system.file("extdata", "MB183_ATAC_subset.tsv.gz", package = "atacInferCnv")
-sAnn = system.file("extdata", "MB183_ATAC_subset.CNV_blocks_ann_n30.txt", package = "atacInferCnv" )
-prepareAtacInferCnvInput(inPath,sAnn,resPath, targColumn = "cnvBlock", ctrlGrp = "Normal",performGA = FALSE)
+inPath = system.file("extdata", "MB183_ATAC_subset.tsv.gz",
+                      package = "atacInferCnv")
+sAnn = system.file("extdata", "MB183_ATAC_subset.CNV_blocks_ann_n30.txt",
+                     package = "atacInferCnv" )
+prepareAtacInferCnvInput(inPath,sAnn,resPath, targColumn = "cnvBlock",
+                          ctrlGrp = "Normal",performGA = FALSE)
 
 }
