@@ -104,10 +104,10 @@ extractMetacells <- function(resDir, sId, sample, targColumn,
 
   # It would be wise to save the Seurat object with the metacell mapping.
 
-  ann_file2 <- sprintf("%s/%s_metacells_mapping.tsv", resDir , sId)
+  ann_file2 <- file.path(resDir,paste0(sId,"_metacells_mapping.tsv"))
   write.table(sample@meta.data, ann_file2, sep="\t", quote=FALSE)
 
-  mtxFile <- paste0(resDir,"/", sId, "_raw_matrix_metacells.txt.gz")
+  mtxFile <- file.path(resDir,paste0( sId, "_raw_matrix_metacells.txt.gz"))
   gz1 <- gzfile(mtxFile, "w")
   write.table(whole_metacells, gz1, quote=FALSE,sep="\t")
   close(gz1)

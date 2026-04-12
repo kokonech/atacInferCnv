@@ -67,7 +67,7 @@ runAtacInferCnv <- function(resDir, configFile = "infercnv_config.yml",
   geneOrderRef <- cfg$customRef
 
   if (!verbose) {
-    log <- file(paste0(resDir,"/infercnv.log"),open="a")
+    log <- file(file.path(resDir,"infercnv.log"),open="a")
     sink(file = log, type = "message")
   }
 

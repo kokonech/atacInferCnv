@@ -38,6 +38,6 @@ writeConfig <- function(resDir, sId , ctrlGrp = "Normal",
   ")
 
   # Write to config.yml
-  writeLines(config_content, paste0(resDir,"infercnv_config.yml"))
+  writeLines(config_content, file.path(resDir,"infercnv_config.yml"))
   invisible(NULL)
 }

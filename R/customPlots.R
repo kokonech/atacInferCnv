@@ -24,7 +24,7 @@
 plotCnvBlocks <- function( resDir, infercnvObj = NULL,
                            plot = TRUE, save = FALSE, verbose = TRUE) {
 
-  cnvDir <- paste0(resDir,"/sample_infercnv")
+  cnvDir <- file.path(resDir,"sample_infercnv")
   if (!(dir.exists(cnvDir))) {
     stop("The result directory with InferCNV input does not exist:",resDir)
   }
@@ -34,7 +34,7 @@ plotCnvBlocks <- function( resDir, infercnvObj = NULL,
   }
 
   if (is.null(infercnvObj)) {
-    infercnv_obj <- readRDS(paste0(cnvDir, "/run.final.infercnv_obj"))
+    infercnv_obj <- readRDS(file.path(cnvDir, "run.final.infercnv_obj"))
   } else {
     if (!inherits(infercnvObj, "infercnv")) {
       stop("The input object is not infercnv  object!")
@@ -42,7 +42,7 @@ plotCnvBlocks <- function( resDir, infercnvObj = NULL,
     infercnv_obj <- infercnvObj
   }
 
-  obsFile <- paste0(cnvDir,"/infercnv.observations.txt")
+  obsFile <- file.path(cnvDir,"infercnv.observations.txt")
   if (file.exists(obsFile)) {
     cnvMtx <- read.table(obsFile,check.names = FALSE)
   } else {
@@ -130,7 +130,7 @@ plotCnvBlocks <- function( resDir, infercnvObj = NULL,
       invisible(print(drawPlot(vals,targ)))
     }
     if (save) {
-      resName <- paste0(cnvDir,"/subclone_",targ,"_CNV_plot.pdf")
+      resName <- file.path(cnvDir,paste0("subclone_",targ,"_CNV_plot.pdf"))
       grDevices::pdf(resName, width = 14, height= 6 )
       print(drawPlot(vals,targ))
       grDevices::dev.off()

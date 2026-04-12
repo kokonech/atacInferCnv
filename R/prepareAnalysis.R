@@ -69,7 +69,7 @@ prepareAnalysis <- function(mb, resDir, sId, annData, targColumn,
                         verbose = paVerbose)
     mb <- FindClusters(object = mb, verbose = paVerbose, algorithm = 3)
 
-    pdf(paste0(resDir,sId,"_UMAP.pdf"),width = 8, height = 6)
+    pdf(file.path(resDir,paste0(sId,"_UMAP.pdf")),width = 8, height = 6)
     # print REQUIRED for ggplot2 output
     print(DimPlot(object = mb, pt.size=1, label=TRUE))
     if (nchar(targColumn) > 0) {
@@ -79,7 +79,7 @@ prepareAnalysis <- function(mb, resDir, sId, annData, targColumn,
     }
     dev.off()
   }
-  saveRDS(mb, paste0(resDir,sId,"_obj.RDS" ))
+  saveRDS(mb, file.path(resDir,paste0(sId,"_obj.RDS") ))
 
   mb
 }
@@ -95,10 +95,10 @@ saveCnvInput <- function(mb,resDir, sId, targColumn) {
   #if (targColumn == "seurat_clusters" ) {
   #    annTable2$seurat_clusters <- paste0("cl",annTable2$seurat_clusters)
   #}
-  write.table(annTable2, paste0(resDir,sId,"_cnv_ann.txt") ,
+  write.table(annTable2, file.path(resDir,paste0(sId,"_cnv_ann.txt")) ,
               col.names = FALSE,sep="\t",quote=FALSE)
 
-  gz1 <- gzfile(paste0(resDir,sId,"_raw_counts.txt.gz"), "w")
+  gz1 <- gzfile(file.path(resDir,paste0(sId,"_raw_counts.txt.gz")), "w")
   rawCounts <- as.matrix(mb@assays$ATAC@counts)
 
   rawCounts <- rawCounts[ grep("chr",rownames(rawCounts)),]
@@ -114,7 +114,7 @@ saveCnvInput <- function(mb,resDir, sId, targColumn) {
   rownames(peakDf) <- paste0(  peakDf[,1],"-",peakDf[,2],"-",peakDf[,3] )
   peakDf$seqnames <- gsub("chr","", peakDf$seqnames)
   summary(rownames(rawCounts) %in% rownames(peakDf))
-  write.table(peakDf, paste0(resDir,sId,"_cnv_ref.txt"),
+  write.table(peakDf, file.path(resDir,paste0(sId,"_cnv_ref.txt")),
               col.names = FALSE,sep="\t",quote=FALSE)
 }
 
@@ -179,15 +179,15 @@ prepareAtacInferCnvInput <- function(dataPath = "",
     if (dir.exists(dataPath)) {
       pa_message("Input is directory, assuming 10X data folder...")
       # scMulti-omics
-      countsPath <- paste0(dataPath,"/filtered_feature_bc_matrix.h5")
-      fragpath <- paste0(dataPath, "/atac_fragments.tsv.gz")
+      countsPath <- file.path(dataPath,"filtered_feature_bc_matrix.h5")
+      fragpath <- file.path(dataPath, "atac_fragments.tsv.gz")
       # scAtac
-      countsPath2 <- paste0(dataPath,"/filtered_peak_bc_matrix.h5")
+      countsPath2 <- file.path(dataPath,"filtered_peak_bc_matrix.h5")
       if (!(file.exists(countsPath))) {
         if (file.exists(countsPath2)) {
           pa_message("10X scATAC format identified")
           countsVals <- Read10X_h5(countsPath2)
-          fragpath <- paste0(dataPath, "/fragments.tsv.gz")
+          fragpath <- file.path(dataPath, "fragments.tsv.gz")
         } else {
           stop("Input feature counts matrix is not found in path: ",dataPath,
              "\nExpected formats: filtered_feature_bc_matrix.h5
@@ -282,7 +282,6 @@ prepareAtacInferCnvInput <- function(dataPath = "",
       }
   }
 
-  resDir <- paste0(resDir,"/") # make sure subfolder usage
   if (!(dir.exists(resDir))) {
     pa_message(paste0("Creating result directory: ", resDir))
     dir.create(resDir)
