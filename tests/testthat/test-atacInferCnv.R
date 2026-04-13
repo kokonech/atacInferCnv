@@ -38,6 +38,19 @@ test_that("prepare input function parses data correctly", {
     regexp = "Non-tumor control group is not found in annotation"
   )
 
+  expect_error(
+    prepareAtacInferCnvInput(resDir= resPath, inObj = "123",
+                             targColumn = "cnvBlock"),
+    regexp = "Tumor input object is not Seurat"
+  )
+
+
+  expect_error(
+    prepareAtacInferCnvInput(inPath, sAnn, resPath,
+                             targColumn = "cnvBlock", ctrlObj = 123),
+    regexp = "Control input object is not Seurat"
+  )
+
 
 })
 

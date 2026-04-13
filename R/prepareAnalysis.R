@@ -31,6 +31,32 @@ mergeWithControl <- function(mb, ctrlObj, targColumn) {
 }
 
 
+checkInputObj <- function(ctrlObj, pName) {
+  t1 = inherits(ctrlObj, "Seurat")
+  t2 = inherits(ctrlObj, "SingleCellExperiment")
+  if (!(t1 || t2)) {
+    stop(
+    paste(pName,"input object is not Seurat or SingleCellExperiment object!")
+    )
+  }
+  if (t2) {
+    chrom_assay  <- CreateChromatinAssay(
+      counts = ctrlObj@assays@data$counts, # might be an issue?
+      sep = c("-", "-") # might be an issue?
+    )
+    cObj <- CreateSeuratObject(
+      counts = chrom_assay,
+      assay = "ATAC",
+      project = pName
+    )
+    cObj@meta.data <- as.data.frame(ctrlObj@colData)
+
+  } else {
+    cObj <- ctrlObj
+  }
+  cObj
+}
+
 prepareAnalysis <- function(mb, resDir, sId, annData, targColumn,
                             ctrlObj, performGA, paVerbose) {
   cIds <- intersect(rownames(annData), rownames(mb@meta.data))
@@ -124,13 +150,14 @@ saveCnvInput <- function(mb,resDir, sId, targColumn) {
 #'  in txt format (gzipped)
 #' @param annPath Path to annotation of the cells in tab-delimited format
 #' @param resDir Path to the result directory
-#' @param inObj Pre-computed Seurat/Signac object with required input data
-#'  (alternative for dataPath)
+#' @param inObj Pre-computed Seurat/Signac or SingleCellExperiment object
+#' with required input data within (alternative for dataPath)
 #' @param sId Result name. Default: "Sample"
 #' @param targColumn Name of the target column in annotation. Default:CellType
 #' @param ctrlGrp Name for the reference control cell type. Could be several
 #' names, separated by comma. Default: "Normal"
-#' @param ctrlObj Seurat/Signac object to use as non-tumor control. Default:NULL
+#' @param ctrlObj Seurat/Signac or SingleCellExperiment object to use
+#' as non-tumor control. Default:NULL
 #' @param binSize Apply custom bin size to combine signals in windows for CNV
 #' calling e.g. 500000 for 500 KBp. Default: NULL (not use this option)
 #' @param chromLength Numeric vector of chromosome sizes, specific for genome.
@@ -244,24 +271,20 @@ prepareAtacInferCnvInput <- function(dataPath = "",
         if (any(ctrlStatus == 0) ) {
           stop("Non-tumor control group is not found in annotation: ", ctrlGrp)
         }
+        cObj <- NULL
       } else {
-        if (!inherits(ctrlObj, "Seurat")) {
-          stop("Non-tumor external control input is not Seurat object!")
-        }
         pa_message("Using external control (assigned as ExtControl)")
-        #print(ctrlObj)
+        cObj <- checkInputObj(ctrlObj,"Control")
+        #print(cObj)
         ctrlGrp <- "ExtControl"
+
       }
 
     }
   } else {
       pa_message("Using existing Signac/Seurat object")
-      if (!inherits(inObj, "Seurat")) {
-        stop("Pre-computed input object is not Seurat object!")
-      }
-
-      mb <- inObj
-      annData <- inObj@meta.data
+      mb <- checkInputObj(inObj,"Tumor")
+      annData <- mb@meta.data
       if (! (targColumn %in% colnames(annData) ) ) {
         stop("Required annotation column is not available
              in pre-computed input object: ", targColumn)
@@ -274,11 +297,14 @@ prepareAtacInferCnvInput <- function(dataPath = "",
         if (any(ctrlStatus == 0) ) {
           stop("Non-tumor control group is not found in annotation: ", ctrlGrp)
         }
+        cObj <- NULL
       } else {
-         pa_message("Merge with external control object")
-         mb <- mergeWithControl(mb,ctrlObj,targColumn)
-         ctrlGrp <- "ExtControl"
-         #print(head(mb@meta.data))
+        pa_message("Using external control (assigned as ExtControl)")
+        cObj <- checkInputObj(ctrlObj,"Control")
+        #print(head(cObj))
+        ctrlGrp <- "ExtControl"
+        mb <- mergeWithControl(mb,cObj,targColumn)
+        #print(head(mb@meta.data))
       }
   }
 
@@ -297,7 +323,7 @@ prepareAtacInferCnvInput <- function(dataPath = "",
 
   if (is.null(inObj)) {
     pa_message("Prepare input data...")
-    mb <- prepareAnalysis(mb, resDir, sId, annData, targColumn, ctrlObj,
+    mb <- prepareAnalysis(mb, resDir, sId, annData, targColumn, cObj,
                           performGA, verbose)
   }
 

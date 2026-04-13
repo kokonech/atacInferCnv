@@ -35,6 +35,7 @@
 #' @import Seurat
 #' @import Signac
 #' @import GenomicRanges
+#' @import SingleCellExperiment
 #' @import infercnv
 #' @import stringr
 #' @useDynLib atacInferCnv, .registration=TRUE

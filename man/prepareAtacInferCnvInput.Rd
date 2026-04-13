@@ -28,8 +28,8 @@ in txt format (gzipped)}
 
 \item{resDir}{Path to the result directory}
 
-\item{inObj}{Pre-computed Seurat/Signac object with required input data
-(alternative for dataPath)}
+\item{inObj}{Pre-computed Seurat/Signac or SingleCellExperiment object
+with required input data within (alternative for dataPath)}
 
 \item{sId}{Result name. Default: "Sample"}
 
@@ -38,7 +38,8 @@ in txt format (gzipped)}
 \item{ctrlGrp}{Name for the reference control cell type. Could be several
 names, separated by comma. Default: "Normal"}
 
-\item{ctrlObj}{Seurat/Signac object to use as non-tumor control. Default:NULL}
+\item{ctrlObj}{Seurat/Signac or SingleCellExperiment object to use
+as non-tumor control. Default:NULL}
 
 \item{binSize}{Apply custom bin size to combine signals in windows for CNV
 calling e.g. 500000 for 500 KBp. Default: NULL (not use this option)}
