@@ -32,8 +32,8 @@ mergeWithControl <- function(mb, ctrlObj, targColumn) {
 
 
 checkInputObj <- function(ctrlObj, pName) {
-  t1 = inherits(ctrlObj, "Seurat")
-  t2 = inherits(ctrlObj, "SingleCellExperiment")
+  t1 <- inherits(ctrlObj, "Seurat")
+  t2 <- inherits(ctrlObj, "SingleCellExperiment")
   if (!(t1 || t2)) {
     stop(
     paste(pName,"input object is not Seurat or SingleCellExperiment object!")

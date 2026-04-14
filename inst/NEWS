@@ -2,6 +2,14 @@ VERSION 0.99.5
 --------------
 
     Updates for Bioconductor submission:
+    * Add support for SingleCellExperiment as input
+    * Re-wrote plots in ggplot format
+    * Fix issues with using file.path
+ 
+VERSION 0.99.5
+--------------
+
+    Updates for Bioconductor submission:
     * Add output of infercnv object to documentation
     * Add ORCID to DESCRIPTION, clean README
     * Fix text typos, other minor fixes

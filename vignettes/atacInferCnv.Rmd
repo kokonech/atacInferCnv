@@ -76,14 +76,16 @@ The function has specific parameters that require adjustment for ATAC-data such 
 atacInferCnv can also generate pseudo-bulk CNV images from the assigned in annotation (if numClusters = 1 assigned in *runAtacInferCnv()*) or identified subclones (if numClusters \> 1 in the same function). For this purpose use the corresponding function after performing the analysis:
 
 ```{r quick-start-5,  message=FALSE, warning=FALSE}
-plotCnvBlocks(resPath,iObj)
+plots <- plotCnvBlocks(resPath,iObj)
+plots[["C1"]]
+plots[["C2"]]
 ```
 
-These figures show CNV patterns for full merged signal and for subclones without (C1) and with (C1) MYCN amplification in chr2.
+These figures show CNV patterns for  subclones without (C1) and with (C1) MYCN amplification in chr2.
 
 # Custom settings
 
-The tool also provides various custom options to control the analysis. For example it supports as input 10X Multiomics or single cell ATAC processed data from CellRanger. If general scATAC anlaysis was already done by Signac/Seurat, then created input object can be re-used without performing additional analysis to create it. This could be especially useful for merged or large samples and atacInferCnv has corresponding argument. Moreover several useful features such as external reference, meta-cell or genome binning are also available.
+The tool also provides various custom options to control the analysis. For example it supports as input 10X Multiomics or single cell ATAC processed data from CellRanger. If general scATAC anlaysis was already done by Signac/Seurat or some other tool, then created input Seurat or SingleCellExperiment object can be re-used without performing additional analysis to create it. This could be especially useful for merged or large samples and atacInferCnv has corresponding argument. Moreover several useful features such as external reference, meta-cell or genome binning are also available.
 
 We provide additional detailed tutorial and information at the project [wiki page](https://github.com/kokonech/atacInferCNV/wiki).
 

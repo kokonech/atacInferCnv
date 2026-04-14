@@ -4,13 +4,7 @@
 \alias{plotCnvBlocks}
 \title{Function to plot CNV blocks}
 \usage{
-plotCnvBlocks(
-  resDir,
-  infercnvObj = NULL,
-  plot = TRUE,
-  save = FALSE,
-  verbose = TRUE
-)
+plotCnvBlocks(resDir, infercnvObj = NULL, save = FALSE, verbose = TRUE)
 }
 \arguments{
 \item{resDir}{Path to the result directory with input}
@@ -18,14 +12,12 @@ plotCnvBlocks(
 \item{infercnvObj}{InferCnv result object. Default: NULL
 If NULL, then the object will be loaded from result directory.}
 
-\item{plot}{Set TRUE to output plot to the screen. Default: TRUE}
-
 \item{save}{Set TRUE to save plot to the result directory. Default: FALSE}
 
 \item{verbose}{Detailed output, progress messages, default TRUE}
 }
 \value{
-Invisibly returns NULL.
+Returns a list of plots
 }
 \description{
 This function creates a plot for CNV assigned/identified subclones

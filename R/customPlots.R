@@ -5,10 +5,9 @@
 #' @param resDir Path to the result directory with input
 #' @param infercnvObj InferCnv result object. Default: NULL
 #' If NULL, then the object will be loaded from result directory.
-#' @param plot Set TRUE to output plot to the screen. Default: TRUE
 #' @param save Set TRUE to save plot to the result directory. Default: FALSE
 #' @param verbose Detailed output, progress messages, default TRUE
-#' @return Invisibly returns NULL.
+#' @return Returns a list of plots
 #' @examples
 #' resPath = tempfile()
 #' inPath = system.file("extdata", "MB183_ATAC_subset.tsv.gz",
@@ -22,7 +21,7 @@
 #' @export
 
 plotCnvBlocks <- function( resDir, infercnvObj = NULL,
-                           plot = TRUE, save = FALSE, verbose = TRUE) {
+                            save = FALSE, verbose = TRUE) {
 
   cnvDir <- file.path(resDir,"sample_infercnv")
   if (!(dir.exists(cnvDir))) {
@@ -53,28 +52,26 @@ plotCnvBlocks <- function( resDir, infercnvObj = NULL,
     cnvMtx <- infercnv_obj@expr.data[ ,cIds]
   }
   gnMtx <- infercnv_obj@gene_order
-
-  cMax <- max(cnvMtx)
-  cMin <- min(cnvMtx)
+  chrVec <- as.character(gnMtx[, 1])
+  cMax <- max(rowMeans(cnvMtx)) * 1.2 #max(cnvMtx)
+  cMin <- min(rowMeans(cnvMtx)) * 0.8 #min(cnvMtx)
   cMean <- mean(rowMeans(cnvMtx))
 
   # draw lines
   curChr <- "1"
-  breaks <- c()
+  breaks <- c(1)
+  chrNames <- c(curChr)
   for (i in seq_len(nrow(gnMtx))) {
     chrId <- as.character(gnMtx[i,1] )
     if (chrId != curChr) {
       #print(chrId)
       breaks <- c(breaks,i)
       curChr <- chrId
+      chrNames <- c(chrNames,chrId)
     }
   }
 
-  chrBorders <- c(1,breaks,nrow(gnMtx))
-  names(chrBorders) <- c(seq_len(22),"")
 
-  rbPal <- colorRampPalette(c('red','green'))
-  chrBreaks <- breaks
   if (infercnv_obj@options$k_obs_groups  == 1) {
     blocks <- c("Full", names(infercnv_obj@tumor_subclusters$subclusters))
   } else {
@@ -85,13 +82,13 @@ plotCnvBlocks <- function( resDir, infercnvObj = NULL,
     blocks <- c("Full", unique(hcBlocksAdj))
   }
 
-
+  resPlots <- list()
   for (targ in blocks) {
     if (verbose) {
       message(targ)
     }
     if (targ == "Full") {
-        vals<-rowMeans(cnvMtx)
+      vals<-rowMeans(cnvMtx)
     } else {
       if (infercnv_obj@options$k_obs_groups  == 1) {
         cellIds<-names(infercnv_obj@tumor_subclusters$subclusters[[targ]][[1]])
@@ -107,35 +104,50 @@ plotCnvBlocks <- function( resDir, infercnvObj = NULL,
       vals <- rowMeans(cnvMtx[,cellIds])
     }
 
-    drawPlot <- function(vals,targ) {
-      adjCols <- rbPal(10)[as.numeric(cut(vals,breaks = 10))]
+    plotDf <- data.frame(
+      x = seq_along(vals), value = vals, chr = chrVec,
+      stringsAsFactors = FALSE
+    )
 
-      plot(vals,pch=20,cex=0.3,
-               main=paste0("inferCNV signal:",targ),
-               col=adjCols,ylim=c(cMin,cMax),
-               xlab="Chromosome", ylab="Modified expr",  axes=FALSE)
-      abline(h=1, col="grey",lwd=1, lty=2)
-      if (length(chrBreaks) > 0) {
-        abline(v=c(1,breaks,nrow(gnMtx)),col="black",lwd=1,lty=2)
-        axis(side=1,at=chrBorders,labels=names(chrBorders),cex.axis=0.45 )
+    p <- ggplot(plotDf, aes(x = x, y = value, color = value)) +
+      geom_point(size = 0.2) +
+      scale_color_gradient(
+        low = "red", high = "green",  guide = "none" #, midpoint = 1, # scg2
+      ) +
+    geom_hline(yintercept = 1, color = "grey50", linetype = "dashed") +
+    labs(
+      title = paste0("inferCNV signal: ", targ),
+      x = "Genomic position",
+      y = "Modified signal"
+    ) +
+    coord_cartesian(ylim = c(cMin, cMax)) +
+    scale_x_continuous(breaks=breaks,labels =  chrNames) +
+    theme_bw() +
+    theme(
+      panel.grid = ggplot2::element_blank(),
+      plot.title = ggplot2::element_text(face = "bold"),
+     # axis.text.x = ggplot2::element_blank(),
+      axis.ticks.x = ggplot2::element_blank()
+    )
+
+    if (length(breaks) > 0) {
+      for (i in seq_len(breaks)) {
+        p <- p +
+          geom_vline(xintercept = breaks[i],
+                     linetype = "dashed", color = "black")
+
       }
-
-      #abline(v=markerLoci, col="red", lwd=0.2, lty=2)
-      axis(side=2,seq(round(cMin,2),round(cMax,2),0.01) )
-      box()
     }
 
+    resPlots[[targ]] <- p
 
-    if (plot) {
-      invisible(print(drawPlot(vals,targ)))
-    }
     if (save) {
       resName <- file.path(cnvDir,paste0("subclone_",targ,"_CNV_plot.pdf"))
-      grDevices::pdf(resName, width = 14, height= 6 )
-      print(drawPlot(vals,targ))
-      grDevices::dev.off()
+      ggsave(filename = resName, plot = p, width = 14, height = 6)
     }
+
   }
 
-  invisible(NULL)
+
+   return(resPlots)
 }
