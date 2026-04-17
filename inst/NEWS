@@ -1,3 +1,10 @@
+VERSION 0.99.6
+--------------
+
+    Updates for Bioconductor submission:
+    * Add tests for SingleCellExperiment support
+    * Fix issues with using file.path
+ 
 VERSION 0.99.5
 --------------
 

@@ -68,7 +68,7 @@ iObj <- runAtacInferCnv(resPath,returnObj = TRUE)
 By default the function returns no output, but it's possible to return infercnv object to fully reflect command *infercnv::run()* using corresponding argument *returnObj*. In any case, all the generated output is saved inside the result path as infercnv subfolder:
 
 ```{r quick-start-41,  message=FALSE, warning=FALSE}
-list.files(paste0(resPath,"/sample_infercnv"))
+list.files(file.path(resPath,"sample_infercnv"))
 ```
 
 The function has specific parameters that require adjustment for ATAC-data such as for example number of clusters (numClusters). Importantly, it supports all options of the original inferCnv functions. These details as well as description of output could be checked from InferCnv [documentation](https://github.com/broadinstitute/inferCNV/wiki).

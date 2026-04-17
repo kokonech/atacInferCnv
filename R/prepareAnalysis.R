@@ -35,13 +35,11 @@ checkInputObj <- function(ctrlObj, pName) {
   t1 <- inherits(ctrlObj, "Seurat")
   t2 <- inherits(ctrlObj, "SingleCellExperiment")
   if (!(t1 || t2)) {
-    stop(
-    paste(pName,"input object is not Seurat or SingleCellExperiment object!")
-    )
+    stop(pName," input object is not Seurat or SingleCellExperiment object!")
   }
   if (t2) {
     chrom_assay  <- CreateChromatinAssay(
-      counts = ctrlObj@assays@data$counts, # might be an issue?
+      counts = assay(ctrlObj, "counts"), # might be an issue?
       sep = c("-", "-") # might be an issue?
     )
     cObj <- CreateSeuratObject(
@@ -49,7 +47,7 @@ checkInputObj <- function(ctrlObj, pName) {
       assay = "ATAC",
       project = pName
     )
-    cObj@meta.data <- as.data.frame(ctrlObj@colData)
+    cObj@meta.data <- as.data.frame(colData(ctrlObj))
 
   } else {
     cObj <- ctrlObj
@@ -282,7 +280,7 @@ prepareAtacInferCnvInput <- function(dataPath = "",
 
     }
   } else {
-      pa_message("Using existing Signac/Seurat object")
+      pa_message("Using existing input object")
       mb <- checkInputObj(inObj,"Tumor")
       annData <- mb@meta.data
       if (! (targColumn %in% colnames(annData) ) ) {

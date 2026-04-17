@@ -69,16 +69,32 @@ test_that("atacInferCnv works correctly on toy data", {
                                           ctrlGrp = ctrlId,performGA = FALSE),
                  regexp = "Prepared input")
 
-  expect_true(file.exists(paste0(resPath,"/sample_raw_counts.txt.gz")))
-  expect_true(file.exists(paste0(resPath,"/sample_cnv_ref.txt")))
-  expect_true(file.exists(paste0(resPath,"/sample_cnv_ann.txt")))
+  expect_true(file.exists(file.path(resPath,"sample_raw_counts.txt.gz")))
+  expect_true(file.exists(file.path(resPath,"sample_cnv_ref.txt")))
+  expect_true(file.exists(file.path(resPath,"sample_cnv_ann.txt")))
+  expect_true(file.exists(file.path(resPath,"sample_obj.RDS")))
 
+  # test SingleCellExperiment input
+  iObj <- readRDS(file.path(resPath,"sample_obj.RDS"))
+  iObj.sce <- as.SingleCellExperiment(iObj)
+  resPath2 = tempfile()
+
+  expect_message( prepareAtacInferCnvInput(resDir= resPath2, inObj = iObj.sce,
+                      targColumn = "cnvBlock",ctrlGrp = ctrlId, verbose = T),
+                  regexp = "Using existing input object")
+
+  expect_true(file.exists(file.path(resPath2,"sample_raw_counts.txt.gz")))
+  expect_true(file.exists(file.path(resPath2,"sample_cnv_ref.txt")))
+  expect_true(file.exists(file.path(resPath2,"sample_cnv_ann.txt")))
+
+
+  # test infercnv
   expect_message( runAtacInferCnv(resPath),
                   regexp = "Making the final infercnv heatmap" )
   expect_true(
-    file.exists(paste0(resPath,"/sample_infercnv/run.final.infercnv_obj")))
+    file.exists(file.path(resPath,"sample_infercnv","run.final.infercnv_obj")))
 
-  iObj <- readRDS(paste0(resPath,"/sample_infercnv/run.final.infercnv_obj"))
+  iObj <- readRDS(file.path(resPath,"sample_infercnv","run.final.infercnv_obj"))
 
   # check params
   expect_true(iObj@options$k_obs_groups == 1)

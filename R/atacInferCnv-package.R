@@ -42,4 +42,5 @@
 #' @importFrom Rcpp sourceCpp
 #' @importFrom GenomeInfoDb keepSeqlevels
 #' @importFrom S4Vectors queryHits subjectHits
+#' @importFrom SummarizedExperiment assay colData
 NULL
